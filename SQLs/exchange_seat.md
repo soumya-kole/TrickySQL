@@ -42,3 +42,6 @@ FROM   cte
 ORDER  BY dept,
           id ;
 ```
+
+## Output
+![img](../Images/seat_arrangement.png)

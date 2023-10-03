@@ -29,14 +29,10 @@ Then connect the database using user/password as admin/admin
 If you want to change user/password, use the docker-compose.yaml
 
 
-## License
-
-Open to all
-
 ## SQLS
 
-[explode implementation](SQLs/explode_demo.sql)
+1. [explode implementation](SQLs/explode_demo.sql)
 
-[windowning](SQLs/window_frame.md)
+2. [windowing](SQLs/window_frame.md)
 
-[exchange seat](SQLs/exchange_seat.md)
+3. [exchange seat](SQLs/exchange_seat.md)
