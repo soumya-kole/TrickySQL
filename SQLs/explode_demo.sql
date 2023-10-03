@@ -2,6 +2,7 @@
 This is an SQL Only (no proc) implementation of Explode()
 */
 
+-- Data preparation
 CREATE DATABASE IF NOT EXISTS demo;
 drop table demo.explode_table;
 CREATE TABLE demo.explode_table (
@@ -15,6 +16,8 @@ INSERT INTO demo.explode_table (csv_column) VALUES
     ('one,two,three,four');
 
 select * from demo.explode_table;
+
+-- Solution
 
 WITH RECURSIVE CTE AS (
     SELECT
