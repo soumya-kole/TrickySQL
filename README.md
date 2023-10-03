@@ -1,6 +1,6 @@
 # TRICKY SQL
 
-This repository contains tricky and advance level SQLS
+This repository contains tricky and advance level SQLs frequently asked in the job interviews
 
 ## Prerequisite
 
@@ -32,7 +32,8 @@ If you want to change user/password, use the docker-compose.yaml
 ## SQLS
 
 1. [explode implementation](SQLs/explode_demo.sql)
-
 2. [windowing](SQLs/window_frame.md)
-
 3. [exchange seat](SQLs/exchange_seat.md)
+4. [Customer with increasing purchase](SQLs/CustomerWithIncreasingPurchase.md)
+
+
