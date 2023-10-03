@@ -36,4 +36,7 @@ Open to all
 ## SQLS
 
 [explode implementation](SQLs/explode_demo.sql)
+
 [windowning](SQLs/window_frame.md)
+
+[exchange seat](SQLs/exchange_seat.md)

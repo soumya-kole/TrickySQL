@@ -1,5 +1,5 @@
 ## Objective
-This is similar to Leetcode problem [leetcode](https://dev.mysql.com/doc/refman/8.0/en/window-functions-frames.html)
+This is similar to Leetcode problem [leetcode](https://leetcode.com/problems/exchange-seats/)
 However, we added dept and seat must be exchanged withing the dept
 
 
