@@ -61,6 +61,20 @@ INSERT INTO demo.stock_data (symbol, date, open, high, low, close, volume) VALUE
 
 ```
 
+## Solution
+
+```sql
+select 
+	symbol,
+	date,
+	close,
+	round(avg(close) over (partition by symbol order by date rows between 2 preceding and current ROW),2) as "3_day_moving_avg",
+	round(avg(close) over (partition by symbol order by date rows between 4 preceding and current ROW),2) as "5_day_moving_avg"
+from demo.stock_data
+order by symbol, date desc
+```
+
+
 ## Further reading
 
 [Mysql official page](https://dev.mysql.com/doc/refman/8.0/en/window-functions-frames.html)
