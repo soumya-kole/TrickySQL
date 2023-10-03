@@ -37,8 +37,6 @@ INSERT INTO demo.stock_data (symbol, date, open, high, low, close, volume) VALUE
     ('AAPL', '2023-09-14', 137.80, 138.30, 137.10, 138.10, 36541234),
     ('AAPL', '2023-09-13', 137.30, 138.00, 137.00, 137.80, 34987654),
     ('AAPL', '2023-09-12', 137.40, 137.70, 136.80, 137.30, 36234567);
-
--- Data for IBM (International Business Machines Corporation)
 INSERT INTO demo.stock_data (symbol, date, open, high, low, close, volume) VALUES
     ('IBM', '2023-10-01', 128.60, 130.20, 128.00, 129.80, 45789234),
     ('IBM', '2023-09-30', 127.80, 129.60, 127.50, 129.10, 38974567),
@@ -63,4 +61,6 @@ INSERT INTO demo.stock_data (symbol, date, open, high, low, close, volume) VALUE
 
 ```
 
-## Environment
+## Further reading
+
+[Mysql official page](https://dev.mysql.com/doc/refman/8.0/en/window-functions-frames.html)
