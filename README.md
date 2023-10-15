@@ -35,5 +35,7 @@ If you want to change user/password, use the docker-compose.yaml
 2. [windowing](SQLs/window_frame.md)
 3. [exchange seat](SQLs/exchange_seat.md)
 4. [Customer with increasing purchase](SQLs/CustomerWithIncreasingPurchase.md)
+5. [Hierarchical query in mysql](SQLs/connect_by_implementation_mysql.md)
+
 
 
