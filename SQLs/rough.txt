@@ -1,0 +1,19 @@
+Hi @Hua, Guangying,
+
+As discussed during today's call, I conducted validation of Production data against the Production-Like table's data for the curated table. Since both tables are populated from the same underlying data source, they should ideally match perfectly.
+
+I performed column-level validation for all 251 columns and found that data in 248 columns matched. However, there are discrepancies in 3 columns:
+
+PATIENT ZIP CODE
+PRMRY_GROUP_ID
+SCNDRY_GROUP_ID
+These discrepancies arise from random value selection, as the deduplication column contains duplicate values in all three cases. We are currently investigating to ensure unique values are selected instead of duplicates.
+
+If we agree on the quality of the Production data, we will proceed with updating the Palantir JDBC to pull data directly from Production, discontinuing the Production-Like schedule. Currently, running parallel executions in both Production and Production-Like incurs unnecessary costs.
+
+@Malla, Manideep,
+
+As you investigate the logic for the ZIP CODE with other teams, please also include PRMRY_GROUP_ID and SCNDRY_GROUP_ID in your analysis.
+
+Regards,
+Soumya
