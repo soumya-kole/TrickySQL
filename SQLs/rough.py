@@ -1,48 +1,41 @@
-from datetime import datetime, timedelta
+from datetime import datetime
 from airflow import DAG
 from airflow.operators.python_operator import PythonOperator
-from airflow.providers.google.cloud.operators.bigquery import BigQueryInsertJobOperator
+import subprocess
+
+def print_context(**kwargs):
+    """
+    Print the task_id and execution_date for context.
+    """
+    # print('ds', ds)
+    fq = kwargs['params']['query']
+    print('Final Query ======', fq)
+    result = subprocess.run(fq, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE, universal_newlines=True)
+    
+    # Print the output
+    print("Output:", result.stdout)
+    print("Error:", result.stderr)
 
 default_args = {
     'owner': 'airflow',
     'depends_on_past': False,
+    'start_date': datetime(2024, 5, 10),
     'email_on_failure': False,
     'email_on_retry': False,
-    'retries': 1,
-    'retry_delay': timedelta(minutes=5),
-    'start_date': datetime(2024, 5, 10),
+    'retries': 0,
 }
 
-def execute_bigquery_query(**context):
-    query = context['dag_run'].conf['query']
-    
-    insert_task = BigQueryInsertJobOperator(
-        task_id='insert_into_bigquery',
-        configuration={
-            "query": {
-                "query": query,
-                "useLegacySql": False
-            },
-            "destination_table": "your_project.your_dataset.new_table",
-            "create_disposition": "CREATE_IF_NEEDED",
-            "write_disposition": "WRITE_TRUNCATE",
-            "location": "US",
-        },
-        dag=context['dag'],
-    )
-    insert_task.execute(context=None)
-
 with DAG(
-    'dynamic_bigquery_dag',
+    'print_context_dag',
     default_args=default_args,
-    description='A DAG to insert data into BigQuery with a dynamic query',
-    schedule_interval=timedelta(days=1),
+    description='A simple DAG with a PythonOperator',
+    schedule_interval=None,
 ) as dag:
 
-    execute_query_task = PythonOperator(
-        task_id='execute_bigquery_query',
-        python_callable=execute_bigquery_query,
-        provide_context=True,
-    )
+    print_context_task = PythonOperator(
+        task_id='print_context',
+        python_callable=print_context,
+        provide_context=True
+        )
 
-execute_query_task
+    print_context_task
