@@ -1,41 +1,17 @@
-from datetime import datetime
-from airflow import DAG
-from airflow.operators.python_operator import PythonOperator
-import subprocess
+I hope you are doing well.
 
-def print_context(**kwargs):
-    """
-    Print the task_id and execution_date for context.
-    """
-    # print('ds', ds)
-    fq = kwargs['params']['query']
-    print('Final Query ======', fq)
-    result = subprocess.run(fq, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE, universal_newlines=True)
-    
-    # Print the output
-    print("Output:", result.stdout)
-    print("Error:", result.stderr)
+We are reaching out to you on Ritesh's recommendation to gain some insights into reading data from a GCS bucket to Snowflake using the following methods:
 
-default_args = {
-    'owner': 'airflow',
-    'depends_on_past': False,
-    'start_date': datetime(2024, 5, 10),
-    'email_on_failure': False,
-    'email_on_retry': False,
-    'retries': 0,
-}
+Batch copy command
+Snowpipe
+We have created the following stages with the help of our Snowflake admin:
 
-with DAG(
-    'print_context_dag',
-    default_args=default_args,
-    description='A simple DAG with a PythonOperator',
-    schedule_interval=None,
-) as dag:
+<details>
+However, we are encountering the following error:
 
-    print_context_task = PythonOperator(
-        task_id='print_context',
-        python_callable=print_context,
-        provide_context=True
-        )
+<details>
+Could you please provide guidance on resolving this issue? Additionally, we would appreciate it if you could share the steps (specific to CVS) for creating Snowpipe.
 
-    print_context_task
+Thank you for your assistance.
+
+Best regards,
