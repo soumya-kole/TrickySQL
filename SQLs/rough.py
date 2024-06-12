@@ -1,21 +1,10 @@
-import os
-from dotenv import load_dotenv
+def task_failure_alert(context):
 
-# Get the path to the directory this file is in
-BASEDIR = os.path.abspath(os.path.dirname(__file__))
-# Load environment variables
-load_dotenv(os.path.join(BASEDIR, '.env'))
-AZURE_SUBSCRIPTION_ID = os.getenv('AZURE_SUBSCRIPTION_ID')
-DATA_LAKE_CONNECTION_STRING = os.getenv('DATA_LAKE_CONNECTION_STRING')
-CONNECTION_STRING = os.getenv('CONNECTION_STRING')
-AZURE_CLIENT_ID = os.getenv('AZURE_CLIENT_ID')
-AZURE_TENANT_ID = os.getenv('AZURE_TENANT_ID')
-AZURE_CLIENT_SECRET = os.getenv('AZURE_CLIENT_SECRET')
-STORAGE_ACCESS_KEY = os.getenv('STORAGE_ACCESS_KEY')
-
-# Default variables
-DEFAULT_RESOURCE_GROUP = 'default-resource-group'
-DEFAULT_LOCATION = 'eastus'
-
-
-
+    print("***DAG failed!! do something***")
+    print(f"The DAG email: {context['params']['email']}")
+    # log_url = f"""{context['params']}/log?dag_id={context['dag']}}&task_id={}&execution_date={}"""
+    dag_run = context.get("dag_run")
+    for task_instance in dag_run.get_task_instances():
+        if task_instance.state == 'failed':
+            log_url = dag_run.get_task_instance(context['task_instance'].task_id).log_url
+            print(f"{task_instance.task_id} failed inside {context['dag'].dag_id} Log url => {log_url}")
