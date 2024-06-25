@@ -1,50 +1,9 @@
-def get_kv(k):
-    return f"Value of {k} from kv"
+I wanted to get your advice on Snowpipe. I don't think we have a Kafka (streaming) use case in Speciality, but we can explore it if you advise.
 
-from collections import UserDict
+On the other hand, we have completed 80% of the development and testing for the GCP Snowflake decommissioning and expect a parallel run of both pipelines (the pipeline with GCP SF and the pipeline without GCP SF) by early next week in PROD to facilitate regression testing.
 
-class ConfigDict(UserDict):
-    def __init__(self, initial_dict=None):
-        initial_dict = initial_dict or {}
-        super().__init__(initial_dict)
-        self.kv_manager = None
+We have taken the following measures to reduce costs while developing for the GCP Snowflake decommissioning:
 
-    def __getitem__(self, key):
-        try:
-            if not self.kv_manager:
-                self.kv_manager = get_kv
-            if self.data[key].startswith('kvval.'):
-                return self.kv_manager(self.data[key].split('.')[1].strip())
-            else:
-                self.data[key]
-        except KeyError:
-            raise KeyError(key)
-
-import yaml
-
-# Function to read YAML file
-def read_yaml(file_path):
-    with open(file_path, 'r') as file:
-        data = yaml.safe_load(file)
-        for k,v in data.items():
-            if str(v).startswith('ref'):
-                ref = data[k].split(':')[1].strip()
-                if len(ref.split('.'))==2:
-                    ref_file =ref
-                    data[k]=read_yaml(ref_file)
-                else:
-                    ref_file = f"{ref.split('.')[0]}.{ref.split('.')[1]}"
-                    d=read_yaml(ref_file)
-                    i = 2
-                    while i < len(ref.split('.')):
-                        d = d[ref.split('.')[i]]
-                        i += 1
-                    data[k]=d
-    return ConfigDict(data)
-
-# Usage
-file_path = 'example.yaml'
-data = read_yaml(file_path)
-print(type(data))
-print(data)
-print(data['age'])
+Transient Tables: As we can always pull the latest data from BigQuery, we are not dependent on the fail-safe feature of Snowflake permanent (normal/default) tables. Therefore, we are opting for transient tables, which can save significant storage costs.
+Travel Feature: Since we do not have a use case for the travel feature, we are switching off that feature for our transient tables, further reducing storage costs.
+Processing Logic Optimization: Tested and found the removal of these processing logics has improved performance by 40%, saving us compute costs.
