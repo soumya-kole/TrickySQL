@@ -1,80 +1,60 @@
-<!DOCTYPE html>
-<html>
-<head>
-    <style>
-        .header {
-            background-color: blue;
-            color: white;
-        }
-        .success { background-color: green; color: white; }
-        .failure { background-color: red; color: white; }
-        table, th, td {
-            border: 1px solid black;
-            border-collapse: collapse;
-            padding: 8px;
-        }
-        a {
-            color: blue;
-            text-decoration: none;
-        }
-    </style>
-</head>
-<body>
-    <table>
-        <thead>
-            <tr class="header">
-                <th>SRC</th>
-                <th>TGT</th>
-                <th>RESULT</th>
-                <th>ROWS_COMPARED</th>
-                <th>COLUMNS_COMPARED</th>
-                <th>SAMPLE_MISMATCH</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for row in rows %}
-            <tr>
-                <td>{{ row.SRC }}</td>
-                <td>{{ row.TGT }}</td>
-                <td class="{{ 'success' if row.RESULT == 'SUCCESS' else 'failure' }}">{{ row.RESULT }}</td>
-                <td>{{ row.ROWS_COMPARED }}</td>
-                <td>{{ row.COLUMNS_COMPARED }}</td>
-                <td><a href="file://{{ row.SAMPLE_MISMATCH }}" target="_blank">{{ row.SAMPLE_MISMATCH }}</a></td>
-            </tr>
-            {% endfor %}
-        </tbody>
-    </table>
-</body>
-</html>
+import pandas as pd
 
+# Sample DataFrame for the main table
+data_main = {
+    'TableName': ['Table1', 'Table2', 'Table3'],
+    'Number of Rules': [5, 3, 4],
+    'Rule Passed': [5, 2, 0],
+    'Rules Failed': [0, 1, 4]
+}
+df_main = pd.DataFrame(data_main)
+
+# Sample DataFrame for rules and status
+data_status = {
+    'rule': ['rule1', 'rule2', 'rule3', 'rule4', 'rule5'],
+    'status': ['passed', 'passed', 'passed', 'passed', 'passed']
+}
+df_status = pd.DataFrame(data_status)
 
 
 
 import pandas as pd
 from jinja2 import Environment, FileSystemLoader
 
-# Sample DataFrame
-data = {
-    'SRC': ['src1', 'src2', 'src3'],
-    'TGT': ['tgt1', 'tgt2', 'tgt3'],
-    'RESULT': ['SUCCESS', 'FAILURE', 'SUCCESS'],
-    'ROWS_COMPARED': [100, 150, 200],
-    'COLUMNS_COMPARED': [10, 15, 20],
-    'SAMPLE_MISMATCH': ['/Users/soumya/Technicals/Notebooks/table_template.html', '/Users/soumya/Technicals/Notebooks/tutorial-great-expectations/data/avocado.csv', '/path/to/file3']
+# Sample DataFrame for the main table
+data_main = {
+    'TableName': ['Table1', 'Table2', 'Table3'],
+    'Number of Rules': [5, 3, 4],
+    'Rule Passed': [5, 2, 0],
+    'Rules Failed': [0, 1, 4]
 }
+df_main = pd.DataFrame(data_main)
 
-df = pd.DataFrame(data)
+# Sample DataFrame for rules and status
+data_status = {
+    'rule': ['rule1', 'rule2', 'rule3', 'rule4', 'rule5'],
+    'status': ['passed', 'failed', 'passed', 'passed', 'passed']
+}
+df_status = pd.DataFrame(data_status)
 
-# Load the template
-file_loader = FileSystemLoader('.')
+# Filter for failed rules
+failed_rules = df_status[df_status['status'] == 'failed']
+print(failed_rules)
+
+# Convert DataFrame to a list of dictionaries
+data_main_dict = df_main.to_dict(orient='records')
+data_status_dict = failed_rules.to_dict(orient='records') if not failed_rules.empty else None
+
+# Load the Jinja2 template
+file_loader = FileSystemLoader('/Users/soumya/Downloads/')
 env = Environment(loader=file_loader)
-template = env.get_template('table_template.html')
+template = env.get_template('template.html')
 
-# Render the template with the DataFrame
-html_output = template.render(rows=df.to_dict(orient='records'))
+# Render the template with data
+output = template.render(data_main=data_main_dict, data_status=data_status_dict)
 
-# Save the output to a file
-with open('report.html', 'w') as file:
-    file.write(html_output)
+# Save the rendered HTML to a file
+with open('output.html', 'w') as f:
+    f.write(output)
 
-print("HTML report generated successfully!")
+print("HTML file has been created: output.html")
