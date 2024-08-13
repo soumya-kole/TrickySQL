@@ -1,60 +1,32 @@
-import pandas as pd
-
-# Sample DataFrame for the main table
-data_main = {
-    'TableName': ['Table1', 'Table2', 'Table3'],
-    'Number of Rules': [5, 3, 4],
-    'Rule Passed': [5, 2, 0],
-    'Rules Failed': [0, 1, 4]
-}
-df_main = pd.DataFrame(data_main)
-
-# Sample DataFrame for rules and status
-data_status = {
-    'rule': ['rule1', 'rule2', 'rule3', 'rule4', 'rule5'],
-    'status': ['passed', 'passed', 'passed', 'passed', 'passed']
-}
-df_status = pd.DataFrame(data_status)
-
-
-
-import pandas as pd
-from jinja2 import Environment, FileSystemLoader
-
-# Sample DataFrame for the main table
-data_main = {
-    'TableName': ['Table1', 'Table2', 'Table3'],
-    'Number of Rules': [5, 3, 4],
-    'Rule Passed': [5, 2, 0],
-    'Rules Failed': [0, 1, 4]
-}
-df_main = pd.DataFrame(data_main)
-
-# Sample DataFrame for rules and status
-data_status = {
-    'rule': ['rule1', 'rule2', 'rule3', 'rule4', 'rule5'],
-    'status': ['passed', 'failed', 'passed', 'passed', 'passed']
-}
-df_status = pd.DataFrame(data_status)
-
-# Filter for failed rules
-failed_rules = df_status[df_status['status'] == 'failed']
-print(failed_rules)
-
-# Convert DataFrame to a list of dictionaries
-data_main_dict = df_main.to_dict(orient='records')
-data_status_dict = failed_rules.to_dict(orient='records') if not failed_rules.empty else None
-
-# Load the Jinja2 template
-file_loader = FileSystemLoader('/Users/soumya/Downloads/')
-env = Environment(loader=file_loader)
-template = env.get_template('template.html')
-
-# Render the template with data
-output = template.render(data_main=data_main_dict, data_status=data_status_dict)
-
-# Save the rendered HTML to a file
-with open('output.html', 'w') as f:
-    f.write(output)
-
-print("HTML file has been created: output.html")
+OD_BASIS_OF_COST_AMT
+OD_BILL_SLS_AMT
+OD_SALES_TAX_AMT
+OD_USUAL_CSTMRY_AMT
+OD_BOOK_PRICE_AMT
+OD CITY_TAX_AMT_CATS
+OD_CMPND_FEE_AMT
+OD_COPAY_AMT
+OD_CLM_CNT
+OD_CNTRCT_RA_AMT
+OD_CNTRCT_RA_HIST_ID
+OD_DSPNS_SITE_ID
+OD_EPH_LINK_ID
+OD_ECS_ORGNL_BILL_AMT
+OD_PTNT_BILLED_AMT
+OD_PTNT_PAID_AMT
+OD_PRMRY_PAYER_BILLED_AMT
+OD_SCNDRY_PAYER_BILLED_AMT
+OD_SCNDRY_PAYER_PAID_AMT
+OD_TRTRY_PAYER_BILLED_AMT
+OD_TRTRY_PAYER_PAID_AMT
+OD_QTNRY_PAYER_BILLED_AMT
+OD_QTNRY_PAYER_PAID_AMT
+OD_OTHR_PAYER_BILLED_AMT
+OD_OTHR_PAYER_PAID_AMT
+U_CURR_IND
+OD_BILL_RA_HIST_ID
+OD_PRC_HDR_GID
+OD_PROD_GID
+OD_SPCLT_PAYER_HRCHY_GID
+OD_SPCLT_COPAY_SRVC_PGM_GID
+OD_SPCLT_COPAY_SRVC_PGM_STUS_GID
