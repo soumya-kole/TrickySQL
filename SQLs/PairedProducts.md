@@ -76,4 +76,4 @@ order by 3 desc, 4 desc, 1, 2
 ```
 
 ## Output
-![img](../Images/paired_products.png)
+![img](../Images/pair_products.png)
