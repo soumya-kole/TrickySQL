@@ -1,12 +1,13 @@
-Table: Employee
+import logging
 
-+-------------+---------+
-| Column Name | Type    |
-+-------------+---------+
-| id          | int     |
-| name        | varchar |
-| salary      | int     |
-| managerId   | int     |
-+-------------+---------+
-id is the primary key (column with unique values) for this table.
-Each row of this table indicates the ID of an employee, their name, salary, and the ID of their manager.
+# Step 1: Set up the logging format and configuration
+log_format = "%(asctime)s - %(name)s - %(levelname)s - %(message)s"
+logging.basicConfig(level=logging.INFO, format=log_format)
+
+# Step 2: Create a custom logger
+logger = logging.getLogger("MyCustomLogger")
+
+# Example usage of the logger
+logger.info("This is an info message from MyCustomLogger.")
+logger.warning("This is a warning message.")
+logger.error("This is an error message.")
