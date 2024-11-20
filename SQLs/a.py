@@ -1,44 +1,57 @@
-class Configuration:
-    _instance = None  # Class variable to hold the singleton instance
+version: "3.8"
+services:
+  mssql:
+    image: mcr.microsoft.com/mssql/server:2022-latest
+    container_name: mssql_container
+    ports:
+      - "1433:1433"
+    environment:
+      - ACCEPT_EULA=Y
+      - SA_PASSWORD=YourStrong!Password
+    restart: on-failure:5  # Change restart policy
 
-    def __new__(cls):
-        if cls._instance is None:
-            cls._instance = super(Configuration, cls).__new__(cls)
-        return cls._instance
 
-    def __init__(self):
-        # Use a guard variable to prevent reinitialization
-        if not hasattr(self, "_initialized"):
-            self._initialized = True  # Mark initialization
-            self._last_value = None  # Initialize attribute to store the last value
-            print("Configuration instance initialized")
 
-    @classmethod
-    def instance(cls):
-        """Returns the singleton instance of Configuration."""
-        if cls._instance is None:
-            cls._instance = cls()
-        return cls._instance
+-- Create databases
+CREATE DATABASE Database1;
+CREATE DATABASE Database2;
 
-    # Method to set a value and return the previous one
-    def set_and_get_previous(self, new_value):
-        previous_value = self._last_value  # Store the previous value
-        self._last_value = new_value  # Update with the new value
-        return previous_value  # Return the previous value
+-- Create User1 and assign to Database1
+CREATE LOGIN User1 WITH PASSWORD = 'Ur1$AmfghY01!';
+USE Database1;
+CREATE USER User1 FOR LOGIN User1;
+ALTER ROLE db_owner ADD MEMBER User1;
 
-# Testing the modified singleton class
+-- Create User2 and assign to Database2
+CREATE LOGIN User2 WITH PASSWORD = 'Ur2$AmfghY01!';
+USE Database2;
+CREATE USER User2 FOR LOGIN User2;
+ALTER ROLE db_owner ADD MEMBER User2;
 
-# Access the singleton instance using the class method
-config = Configuration.instance()
 
-# First call: No previous value, so it should return None
-result1 = config.set_and_get_previous("Value1")
-print("Previous value (expected None):", result1)  # Output: None
+USE Database1;
+CREATE TABLE Employees (
+    EmployeeID INT PRIMARY KEY,        -- Unique identifier for each employee
+    FirstName NVARCHAR(50) NOT NULL,   -- Employee's first name
+    LastName NVARCHAR(50) NOT NULL,    -- Employee's last name
+    HireDate DATE,                     -- Date of hire
+    Salary DECIMAL(18, 2)              -- Employee's salary
+);
 
-# Second call: Returns "Value1" as the previous value
-result2 = config.set_and_get_previous("Value2")
-print("Previous value (expected 'Value1'):", result2)  # Output: Value1
+INSERT INTO Employees (EmployeeID, FirstName, LastName, HireDate, Salary)
+VALUES
+(1, 'John', 'Doe', '2023-01-01', 60000.00),
+(2, 'Jane', 'Smith', '2023-02-01', 75000.00);
 
-# Third call: Returns "Value2" as the previous value
-result3 = config.set_and_get_previous("Value3")
-print("Previous value (expected 'Value2'):", result3)  # Output: Value2
+USE Database2;
+CREATE TABLE Employees_2 (
+    EmployeeID INT PRIMARY KEY,        -- Unique identifier for each employee
+    FirstName NVARCHAR(50) NOT NULL,   -- Employee's first name
+    LastName NVARCHAR(50) NOT NULL,    -- Employee's last name
+    HireDate DATE,                     -- Date of hire
+    Salary DECIMAL(18, 2)              -- Employee's salary
+);
+INSERT INTO Employees_2 (EmployeeID, FirstName, LastName, HireDate, Salary)
+VALUES
+(101, 'xxx', 'yyy', '2022-01-01', 60000.00),
+(202, 'bbb', 'ccc', '2022-02-01', 75000.00);
