@@ -1,57 +1,70 @@
-version: "3.8"
-services:
-  mssql:
-    image: mcr.microsoft.com/mssql/server:2022-latest
-    container_name: mssql_container
-    ports:
-      - "1433:1433"
-    environment:
-      - ACCEPT_EULA=Y
-      - SA_PASSWORD=YourStrong!Password
-    restart: on-failure:5  # Change restart policy
+import subprocess
+import time
+import logging
+import pytest
+import os
 
+# Setup logging
+logging.basicConfig(
+    filename="docker_compose_test.log",
+    level=logging.INFO,
+    format="%(asctime)s [%(levelname)s]: %(message)s",
+)
+logger = logging.getLogger(__name__)
 
+@pytest.fixture(scope="session")
+def docker_compose():
+    """
+    Pytest fixture to set up and tear down Docker Compose services for MSSQL.
+    """
+    # Path to the provided docker-compose.yml
+    docker_compose_file = "./docker-compose.yml"
 
--- Create databases
-CREATE DATABASE Database1;
-CREATE DATABASE Database2;
+    try:
+        # Start Docker Compose services
+        logger.info("Starting Docker Compose services...")
+        subprocess.run(["docker-compose", "-f", docker_compose_file, "up", "-d"], check=True)
 
--- Create User1 and assign to Database1
-CREATE LOGIN User1 WITH PASSWORD = 'Ur1$AmfghY01!';
-USE Database1;
-CREATE USER User1 FOR LOGIN User1;
-ALTER ROLE db_owner ADD MEMBER User1;
+        # Wait for the MSSQL service to be ready
+        logger.info("Waiting for MSSQL service to be ready...")
+        wait_for_mssql_service(timeout=60)
+        logger.info("MSSQL service is ready.")
 
--- Create User2 and assign to Database2
-CREATE LOGIN User2 WITH PASSWORD = 'Ur2$AmfghY01!';
-USE Database2;
-CREATE USER User2 FOR LOGIN User2;
-ALTER ROLE db_owner ADD MEMBER User2;
+        yield  # This is where the tests will execute
 
+    finally:
+        # Tear down Docker Compose services
+        logger.info("Stopping Docker Compose services...")
+        subprocess.run(["docker-compose", "-f", docker_compose_file, "down"], check=True)
+        logger.info("Docker Compose services stopped.")
 
-USE Database1;
-CREATE TABLE Employees (
-    EmployeeID INT PRIMARY KEY,        -- Unique identifier for each employee
-    FirstName NVARCHAR(50) NOT NULL,   -- Employee's first name
-    LastName NVARCHAR(50) NOT NULL,    -- Employee's last name
-    HireDate DATE,                     -- Date of hire
-    Salary DECIMAL(18, 2)              -- Employee's salary
-);
+def wait_for_mssql_service(timeout=60):
+    """
+    Wait until the MSSQL service is available.
+    """
+    import pymssql
 
-INSERT INTO Employees (EmployeeID, FirstName, LastName, HireDate, Salary)
-VALUES
-(1, 'John', 'Doe', '2023-01-01', 60000.00),
-(2, 'Jane', 'Smith', '2023-02-01', 75000.00);
+    start_time = time.time()
+    while time.time() - start_time < timeout:
+        try:
+            # Connect to MSSQL service
+            connection = pymssql.connect(
+                server="localhost",
+                user="sa",
+                password="YourStrong!Password",
+                database="master",
+                port=1433,
+            )
+            connection.close()
+            return True
+        except pymssql.OperationalError as e:
+            logger.warning(f"MSSQL service not ready: {e}")
+            time.sleep(5)
+    raise TimeoutError("MSSQL service did not become ready within the timeout period.")
 
-USE Database2;
-CREATE TABLE Employees_2 (
-    EmployeeID INT PRIMARY KEY,        -- Unique identifier for each employee
-    FirstName NVARCHAR(50) NOT NULL,   -- Employee's first name
-    LastName NVARCHAR(50) NOT NULL,    -- Employee's last name
-    HireDate DATE,                     -- Date of hire
-    Salary DECIMAL(18, 2)              -- Employee's salary
-);
-INSERT INTO Employees_2 (EmployeeID, FirstName, LastName, HireDate, Salary)
-VALUES
-(101, 'xxx', 'yyy', '2022-01-01', 60000.00),
-(202, 'bbb', 'ccc', '2022-02-01', 75000.00);
+def test_example(docker_compose):
+    """
+    Example test that depends on Docker Compose being up.
+    """
+    logger.info("Running test with Docker Compose services...")
+    assert True  # Replace with actual assertions
