@@ -1,70 +1,43 @@
-import subprocess
-import time
-import logging
-import pytest
-import os
+from pydantic import BaseModel, Field, model_validator
+from typing import Optional, Literal
 
-# Setup logging
-logging.basicConfig(
-    filename="docker_compose_test.log",
-    level=logging.INFO,
-    format="%(asctime)s [%(levelname)s]: %(message)s",
-)
-logger = logging.getLogger(__name__)
+class DDQLiteRule(BaseModel):
+    rule_number: int
+    source_table: Optional[str] = None
+    source_datastore: str
+    check_type: Literal['not_null', 'distinct_count', 'unique_check', 'within_set', 'query', 'drift']
+    column_name: Optional[str] = None
+    expected_value: Optional[int] = None
+    source_query: Optional[str] = None
+    target_query: Optional[str] = None
+    target_datastore: Optional[str] = None
+    drift_check_type: Optional[Literal['null_percent', 'standard_deviation', 'avg', 'z_score-cnt']] = None
+    drift_threshold: Optional[float] = None
 
-@pytest.fixture(scope="session")
-def docker_compose():
-    """
-    Pytest fixture to set up and tear down Docker Compose services for MSSQL.
-    """
-    # Path to the provided docker-compose.yml
-    docker_compose_file = "./docker-compose.yml"
+    @model_validator(mode="before")
+    @classmethod
+    def validate_fields(cls, values):
+        check_type = values.get("check_type")
 
-    try:
-        # Start Docker Compose services
-        logger.info("Starting Docker Compose services...")
-        subprocess.run(["docker-compose", "-f", docker_compose_file, "up", "-d"], check=True)
+        # Validation for 'distinct_count', 'unique_check', 'within_set', 'not_null'
+        if check_type in ['distinct_count', 'unique_check', 'within_set', 'not_null']:
+            if not values.get("column_name"):
+                raise ValueError(f"'column_name' is required for check_type '{check_type}'")
+            if not values.get("source_table"):
+                raise ValueError(f"'source_table' is required for check_type '{check_type}'") 
+            if check_type in ['distinct_count'] and not values.get("expected_value"):
+                raise ValueError(f"'expected_value' is required for check_type '{check_type}'")
 
-        # Wait for the MSSQL service to be ready
-        logger.info("Waiting for MSSQL service to be ready...")
-        wait_for_mssql_service(timeout=60)
-        logger.info("MSSQL service is ready.")
+        # Validation for 'query'
+        if check_type == "query":
+            if not values.get("source_query") or not values.get("target_query") or not values.get("target_datastore"):
+                raise ValueError(f"'source_query', 'target_query', and 'target_datastore' are required for check_type 'query'")
 
-        yield  # This is where the tests will execute
+        # Validation for 'drift'
+        if check_type == "drift":
+            required_fields = ["source_table", "column_name", "drift_check_type", "drift_threshold"]
+            missing_fields = [field for field in required_fields if not values.get(field)]
+            if missing_fields:
+                raise ValueError(f"{', '.join(missing_fields)} are required for check_type 'drift'")
 
-    finally:
-        # Tear down Docker Compose services
-        logger.info("Stopping Docker Compose services...")
-        subprocess.run(["docker-compose", "-f", docker_compose_file, "down"], check=True)
-        logger.info("Docker Compose services stopped.")
-
-def wait_for_mssql_service(timeout=60):
-    """
-    Wait until the MSSQL service is available.
-    """
-    import pymssql
-
-    start_time = time.time()
-    while time.time() - start_time < timeout:
-        try:
-            # Connect to MSSQL service
-            connection = pymssql.connect(
-                server="localhost",
-                user="sa",
-                password="YourStrong!Password",
-                database="master",
-                port=1433,
-            )
-            connection.close()
-            return True
-        except pymssql.OperationalError as e:
-            logger.warning(f"MSSQL service not ready: {e}")
-            time.sleep(5)
-    raise TimeoutError("MSSQL service did not become ready within the timeout period.")
-
-def test_example(docker_compose):
-    """
-    Example test that depends on Docker Compose being up.
-    """
-    logger.info("Running test with Docker Compose services...")
-    assert True  # Replace with actual assertions
+        return values
