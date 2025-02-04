@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Validation Report</title>
+    <style>
+        table {
+            width: 50%;
+            border-collapse: collapse;
+        }
+        table, th, td {
+            border: 1px solid black;
+        }
+        th, td {
+            padding: 10px;
+            text-align: left;
+        }
+    </style>
+</head>
+<body>
+    <h2>Validation Report</h2>
+    <table>
+        <tr>
+            <th>TableName</th>
+            <th>Number of Rules</th>
+            <th>Rule Passed</th>
+            <th>Rules Failed</th>
+        </tr>
+        {% for row in data_main %}
+        <tr>
+            <td>{{ row.TableName }}</td>
+            <td>{{ row['Number of Rules'] }}</td>
+            <td style="color: {{ 'green' if row['Rule Passed'] > 0 else 'red' }};">{{ row['Rule Passed'] }}</td>
+            <td style="color: {{ 'red' if row['Rules Failed'] > 0 else 'green' }};">{{ row['Rules Failed'] }}</td>
+        </tr>
+        {% endfor %}
+    </table>
+
+    {% if data_status %}
+    <h2>Failed Rules</h2>
+    <table>
+        <tr>
+            <th>Rule</th>
+            <th>Status</th>
+        </tr>
+        {% for row in data_status %}
+        <tr>
+            <td>{{ row.rule }}</td>
+            <td style="color: {{ 'red' if row.status == 'failed' else 'green' }};">{{ row.status }}</td>
+        </tr>
+        {% endfor %}
+    </table>
+    {% endif %}
+</body>
+</html>
