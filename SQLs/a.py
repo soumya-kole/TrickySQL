@@ -1,98 +1,57 @@
+import streamlit as st
 import pandas as pd
-import yaml
-from jinja2 import Template
+from ydata_profiling import ProfileReport
+from streamlit_pandas_profiling import st_profile_report
+import base64
+import os
 
+st.set_page_config(page_title="📊 Data Profiler", layout="wide")
+st.title("🧠 CSV Data Profiler App")
 
-def get_color(value, column, rules, default_color="white"):
-    """Determine cell color based on conditions in YAML."""
-    if column in rules:
-        for rule in rules[column]:
-            for condition, color in rule.items():
-                try:
-                    if isinstance(value, (int, float)) and isinstance(condition, str):
-                        if eval(f"{value} {condition}", {"__builtins__": {}}, {}):
-                            return color
-                except Exception as e:
-                    print(f"Warning: Failed to evaluate condition '{condition}' for value {value} - {e}")
-    return default_color  # Default color when no condition matches
+# --- Helper to load and parse the CSV with smart date detection ---
+@st.cache_data
+def load_data(file):
+    df = pd.read_csv(file)
 
+    for col in df.columns:
+        if df[col].dtype == 'object':
+            try:
+                sample = df[col].dropna().iloc[0]
+                parsed = pd.to_datetime(sample, utc=True)
+                if 1900 < parsed.year < 2100:
+                    df[col] = pd.to_datetime(df[col], utc=True)
+            except Exception as e:
+                print(f"🕒 Failed to parse column '{col}' as datetime: {e}")
+    return df
 
-def generate_html_table(dfs, yaml_rules):
-    """Generate an HTML file with multiple tables from dataframes and YAML rules."""
-    rules = yaml.safe_load(yaml_rules)
+# --- Upload CSV ---
+uploaded_file = st.file_uploader("📤 Upload your CSV file", type=["csv"])
 
-    html_template = Template("""
-    <!DOCTYPE html>
-    <html>
-    <head>
-        <title>Generated Tables</title>
-    </head>
-    <body>
-    {% if rules.get('header') %}
-        {{ rules['header'] | safe }}
-    {% endif %}
+if uploaded_file:
+    df = load_data(uploaded_file)
 
-    {% for df_name, df in dfs.items() %}
-    <h2>{{ df_name }}</h2>
-    <table border="1">
-        <caption>{% if rules.get(df_name, {}).get('caption') %}{{ rules[df_name]['caption'] }}{% endif %}</caption>
-        <tr>
-            {% for column in df.columns %}
-                <th>{{ column }}</th>
-            {% endfor %}
-        </tr>
-        {% for _, row in df.iterrows() %}
-        <tr>
-            {% for column in df.columns %}
-                {% set color = get_color(row[column], column, rules.get(df_name, {})) %}
-                <td style="background-color: {{ color }}">{{ row[column] | e }}</td>
-            {% endfor %}
-        </tr>
-        {% endfor %}
-    </table>
-    {% endfor %}
+    st.subheader("🔍 Data Preview")
+    st.dataframe(df.head())
 
-    {% if rules.get('trailer') %}
-        {{ rules['trailer'] | safe }}
-    {% endif %}
-    </body>
-    </html>
-    """)
+    st.subheader("📋 Generating Profile Report...")
+    profile = ProfileReport(df, title="Profiling Report", explorative=True)
 
-    return html_template.render(dfs=dfs, get_color=get_color, rules=rules)
+    # Show inside Streamlit
+    st_profile_report(profile)
 
+    # Export to HTML
+    html_path = "profile_report.html"
+    profile.to_file(html_path)
 
-# Sample DataFrames
-dfs = {
-    "Students": pd.DataFrame({
-        "Name": ["Alice", "Bob", "Charlie", "David"],
-        "Marks": [85, 25, 60, 90]
-    }),
-    "Attendance": pd.DataFrame({
-        "Name": ["Alice", "Bob", "Charlie", "David"],
-        "Attendance": [95, 40, 75, 85]
-    })
-}
+    # Make download button
+    with open(html_path, "r", encoding="utf-8") as f:
+        html_content = f.read()
+        b64 = base64.b64encode(html_content.encode()).decode()
+        href = f'<a href="data:text/html;base64,{b64}" download="profile_report.html">📥 Download HTML Report</a>'
+        st.markdown(href, unsafe_allow_html=True)
 
-# Updated YAML Formatting Rules with Optional Page Header, Trailer, and Table Captions
-yaml_rules = """
-header: "<h1>Overall Report</h1>"
-trailer: "<h1><em>End of Report.</em></h1>"
-Students:
-  Marks:
-    - ">80": "green"
-    - "<30": "red"
-Attendance:
-  Attendance:
-    - ">90": "green"
-    - "<50": "red"
-  caption: "This table shows attendance records."
-"""
+    # Optional: clean up saved file
+    os.remove(html_path)
 
-# Generate HTML file
-html_output = generate_html_table(dfs, yaml_rules)
-
-with open("output_tables.html", "w", encoding="utf-8") as file:
-    file.write(html_output)
-
-print("✅ HTML Tables Generated with Conditional Formatting!")
+else:
+    st.info("👆 Upload a CSV file to get started.")
