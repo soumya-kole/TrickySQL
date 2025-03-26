@@ -1,57 +1,70 @@
-import streamlit as st
-import pandas as pd
-from ydata_profiling import ProfileReport
-from streamlit_pandas_profiling import st_profile_report
-import base64
-import os
-
-st.set_page_config(page_title="📊 Data Profiler", layout="wide")
-st.title("🧠 CSV Data Profiler App")
-
-# --- Helper to load and parse the CSV with smart date detection ---
-@st.cache_data
-def load_data(file):
-    df = pd.read_csv(file)
-
-    for col in df.columns:
-        if df[col].dtype == 'object':
-            try:
-                sample = df[col].dropna().iloc[0]
-                parsed = pd.to_datetime(sample, utc=True)
-                if 1900 < parsed.year < 2100:
-                    df[col] = pd.to_datetime(df[col], utc=True)
-            except Exception as e:
-                print(f"🕒 Failed to parse column '{col}' as datetime: {e}")
-    return df
-
-# --- Upload CSV ---
-uploaded_file = st.file_uploader("📤 Upload your CSV file", type=["csv"])
-
-if uploaded_file:
-    df = load_data(uploaded_file)
-
-    st.subheader("🔍 Data Preview")
-    st.dataframe(df.head())
-
-    st.subheader("📋 Generating Profile Report...")
-    profile = ProfileReport(df, title="Profiling Report", explorative=True)
-
-    # Show inside Streamlit
-    st_profile_report(profile)
-
-    # Export to HTML
-    html_path = "profile_report.html"
-    profile.to_file(html_path)
-
-    # Make download button
-    with open(html_path, "r", encoding="utf-8") as f:
-        html_content = f.read()
-        b64 = base64.b64encode(html_content.encode()).decode()
-        href = f'<a href="data:text/html;base64,{b64}" download="profile_report.html">📥 Download HTML Report</a>'
-        st.markdown(href, unsafe_allow_html=True)
-
-    # Optional: clean up saved file
-    os.remove(html_path)
-
-else:
-    st.info("👆 Upload a CSV file to get started.")
+altair==5.5.0
+annotated-types==0.7.0
+attrs==25.3.0
+blinker==1.9.0
+cachetools==5.5.2
+certifi==2025.1.31
+charset-normalizer==3.4.1
+click==8.1.8
+contourpy==1.3.1
+cycler==0.12.1
+dacite==1.9.2
+fonttools==4.56.0
+gitdb==4.0.12
+GitPython==3.1.44
+htmlmin==0.1.12
+idna==3.10
+ImageHash==4.3.1
+Jinja2==3.1.6
+joblib==1.1.1
+jsonschema==4.23.0
+jsonschema-specifications==2024.10.1
+kiwisolver==1.4.8
+llvmlite==0.40.1
+MarkupSafe==2.1.5
+matplotlib==3.10.0
+missingno==0.5.2
+multimethod==1.12
+narwhals==1.32.0
+networkx==3.4.2
+numba==0.57.1
+numpy==1.24.4
+packaging==24.2
+pandas==2.2.3
+pandas-profiling==3.2.0
+patsy==1.0.1
+phik==0.12.4
+pillow==11.1.0
+protobuf==5.29.4
+puremagic==1.28
+pyarrow==19.0.1
+pydantic==2.10.6
+pydantic_core==2.27.2
+pydeck==0.9.1
+pyparsing==3.2.3
+python-dateutil==2.9.0.post0
+pytz==2025.2
+PyWavelets==1.8.0
+PyYAML==6.0.2
+referencing==0.36.2
+requests==2.32.3
+rpds-py==0.23.1
+scipy==1.15.2
+seaborn==0.13.2
+six==1.17.0
+smmap==5.0.2
+statsmodels==0.14.4
+streamlit==1.44.0
+streamlit-pandas-profiling==0.1.3
+tangled-up-in-unicode==0.2.0
+tenacity==9.0.0
+toml==0.10.2
+tornado==6.4.2
+tqdm==4.67.1
+typeguard==4.4.2
+typing_extensions==4.12.2
+tzdata==2025.2
+urllib3==2.3.0
+visions==0.8.1
+wordcloud==1.9.4
+ydata-profiling==4.16.0
