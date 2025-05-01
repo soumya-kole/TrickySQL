@@ -1,47 +1,42 @@
-from langchain_openai import ChatOpenAI
-from langchain.prompts import ChatPromptTemplate
-from langchain.chains import LLMChain
+🔍 Sliding Window Approach for Image-Based PDF Text Extraction Using GPT-4o
+This strategy is ideal when processing scanned multipage PDFs by converting each page to an image and using OpenAI GPT-4o's vision + text capabilities.
 
-# Initialize your GPT-4o model
-llm = ChatOpenAI(
-    model="gpt-4o",
-    openai_api_key="YOUR_API_KEY",
-    temperature=0.3
-)
+✅ How It Works:
+Convert PDF to Images:
 
-# Create the prompt
-prompt = ChatPromptTemplate.from_template("""
-You are a legal document analyst.
+Each page of the PDF is rendered as an image (e.g., using pdf2image).
 
-Given the following contract text:
+Define Sliding Window:
 
-{document_text}
+A window of N previous page texts (say, 3–5 pages) is maintained as context.
 
-Your task:
-- Identify important sections of the contract.
-- For each section, create a short title.
-- Summarize each section in 2-4 sentences.
-- Return the output strictly as a JSON object where:
-    - key = section title
-    - value = concise summary.
+This context is passed as text alongside the current page's image.
 
-Only include meaningful, important sections. Ignore repetitive legal boilerplate.
+Sequential Processing:
 
-Respond only with a valid JSON.
-""")
+For the first page, the model gets only the image (no prior context).
 
-# Create the chain
-chain = LLMChain(
-    llm=llm,
-    prompt=prompt
-)
+For page 2 onward, the prompt includes:
+“Here’s the prior context:\n<extracted text from previous pages>\nNow extract text from this image:”
 
-# Run the chain
-def summarize_contract(document_text):
-    response = chain.invoke({"document_text": document_text})
-    return response["text"]
+This continues, sliding the window forward each time.
 
-# Example usage
-text = open('your_extracted_contract.txt').read()
-result_json = summarize_contract(text)
-print(result_json)
+Accumulate Outputs:
+
+The extracted text for each page is stored.
+
+You may optionally validate or clean for redundancy due to repeated context.
+
+🎯 Benefits:
+✅ Context preservation across pages — improves extraction for documents where sentences, tables, or sections span multiple pages.
+
+✅ Better semantic coherence, especially for legal, medical, or technical documents.
+
+✅ Model-friendly input — balances between image and text, respecting token limits.
+
+⚠️ Things to Watch:
+Keep context window size within token limits (e.g., 3–5 pages max depending on text density).
+
+Be cautious of drift or hallucination from outdated or overly long context.
+
+Ensure clean text extraction per page, as noise can compound in context.
