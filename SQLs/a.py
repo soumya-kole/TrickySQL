@@ -1,21 +1,19 @@
-update_columns_to_inf(df, columns):
-    for col in columns:
-        col1 = f'PREVIOUS_{col}'
-        col2 = f'{col}_PERCENT_DIFF'
-        col3 = f'CURRENT_{col}'
+st.success("✅ Changes saved successfully!")
+st.warning("⚠️ You have unsaved changes.")
+st.button("💾 Save Changes")
+st.button("♻️ Reset to Original")
+st.title("📝 Data Editor")
 
-        def format_value(row):
-            prev = row[col1]
-            curr = row[col3]
+st.header("📋 Edit Dataset")
+st.markdown("Use the interactive table below to view and modify your data.")
 
-            if prev == 0 and curr != 0:
-                return "Infinity"
-            elif curr == 0:
-                return "0"
-            else:
-                diff = ((curr - prev) / prev) * 100
-                return f'{diff:.2f}'
+st.subheader("✏️ Manual Edits")
+st.subheader("📄 Preview Changes")
+st.subheader("✅ Save & Apply")
 
-        df[col2] = df.apply(format_value, axis=1)
+Home/Dashboard	🏠 📋 🧭
+Data & Charts	📊 📈 🧮
+ML/AI Models	🤖 🧠 📡
+Alerts/Status	✅ ❌ ⚠️ ℹ️
+Actions	🚀 🔍 🛠️ 🗑️
 
-    return df
