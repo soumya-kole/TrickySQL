@@ -1,19 +1,26 @@
-st.success("✅ Changes saved successfully!")
-st.warning("⚠️ You have unsaved changes.")
-st.button("💾 Save Changes")
-st.button("♻️ Reset to Original")
-st.title("📝 Data Editor")
+Prompt:
+Please analyze the following legal agreement and return a list of its section headings and a short summary for each section.
 
-st.header("📋 Edit Dataset")
-st.markdown("Use the interactive table below to view and modify your data.")
+Document:
+<<< paste full main agreement >>>
 
-st.subheader("✏️ Manual Edits")
-st.subheader("📄 Preview Changes")
-st.subheader("✅ Save & Apply")
 
-Home/Dashboard	🏠 📋 🧭
-Data & Charts	📊 📈 🧮
-ML/AI Models	🤖 🧠 📡
-Alerts/Status	✅ ❌ ⚠️ ℹ️
-Actions	🚀 🔍 🛠️ 🗑️
+You are a legal assistant.
 
+Compare the following two documents: one is the main agreement and the other is an addendum. Identify:
+1. Which sections in the main agreement are modified or superseded
+2. Any new clauses introduced by the addendum
+3. Suggestions on how to merge them clearly
+
+Main Agreement:
+<<< paste structure/sections >>>
+
+Addendum:
+<<< paste structure/sections >>>
+
+
+Given:
+1. The original Section 4 (from the main agreement)
+2. The addendum's revised version or amendment
+
+Please merge them into a single, legally coherent Section 4 with all updates included.
