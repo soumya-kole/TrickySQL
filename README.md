@@ -115,3 +115,5 @@ make setup 2153-the-number-of-passengers-in-each-bus-ii 2     # uses ## Setup2
 6. [The Number of Passengers in Each Bus I](SQLs/leetcode/2142-the-number-of-passengers-in-each-bus-i/description.md)
 7. [The Number of Passengers in Each Bus II](SQLs/leetcode/2153-the-number-of-passengers-in-each-bus-ii/description.md)
 8. [Find Median Given Frequency of Numbers](SQLs/leetcode/0571-find-median-given-frequency-of-numbers/description.md)
+9. [Consecutive Available Seats](SQLs/leetcode/0603-consecutive-available-seats/description.md)
+10. [Generate the Invoice](SQLs/leetcode/2362-generate-the-invoice/description.md)
