@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Execute the Setup SQL block from a .md problem file against the local MySQL instance."""
+"""Execute the Setup SQL block from a problem's setup.md against the local MySQL instance."""
 
 import re
 import sys
@@ -17,13 +17,36 @@ DB_CONFIG = {
 }
 
 
-def find_md_file(filename: str) -> Path:
-    matches = list(PROJECT_ROOT.rglob(filename))
+def find_setup_file(target: str) -> Path:
+    """Resolve a general .md filename/path, or a problem folder name, to its setup source."""
+    # Absolute or relative path (e.g. "SQLs/window_frame.md", "SQLs/leetcode/<folder>"): resolve directly.
+    if "/" in target or Path(target).is_absolute():
+        path = Path(target)
+        if not path.is_absolute():
+            path = PROJECT_ROOT / path
+        if path.is_dir():
+            path = path / "setup.md"
+        if not path.exists():
+            sys.exit(f"Error: file not found: '{path}'")
+        return path
+
+    # Bare "<name>.md": a general single-file problem — search all subdirectories by filename.
+    if target.endswith(".md"):
+        matches = list(PROJECT_ROOT.rglob(target))
+        if not matches:
+            sys.exit(f"Error: '{target}' not found under {PROJECT_ROOT}")
+        if len(matches) > 1:
+            paths = "\n  ".join(str(p) for p in matches)
+            sys.exit(f"Error: multiple files named '{target}' found:\n  {paths}\nProvide a more specific path.")
+        return matches[0]
+
+    # Bare name with no extension: a problem folder name (e.g. under SQLs/leetcode/ or SQLs/other_problems/).
+    matches = [p / "setup.md" for p in PROJECT_ROOT.rglob(target) if p.is_dir() and (p / "setup.md").exists()]
     if not matches:
-        sys.exit(f"Error: '{filename}' not found under {PROJECT_ROOT}")
+        sys.exit(f"Error: no problem folder named '{target}' with a setup.md found under {PROJECT_ROOT}")
     if len(matches) > 1:
         paths = "\n  ".join(str(p) for p in matches)
-        sys.exit(f"Error: multiple files named '{filename}' found:\n  {paths}\nProvide a more specific path.")
+        sys.exit(f"Error: multiple problem folders named '{target}' found:\n  {paths}\nProvide a more specific path.")
     return matches[0]
 
 
@@ -63,7 +86,7 @@ def execute_sql(sql: str) -> None:
 
 def main() -> None:
     if len(sys.argv) < 2:
-        sys.exit("Usage: setup_sql.py <filename.md> [setup_num]")
+        sys.exit("Usage: setup_sql.py <problem-folder> [setup_num]")
 
     target = sys.argv[1]
     setup_num = 1
@@ -73,10 +96,7 @@ def main() -> None:
         except ValueError:
             sys.exit(f"Error: setup number must be an integer, got '{sys.argv[2]}'")
 
-    md_path = Path(target) if Path(target).is_absolute() or "/" in target else find_md_file(target)
-
-    if not md_path.exists():
-        sys.exit(f"Error: file not found: '{md_path}'")
+    md_path = find_setup_file(target)
 
     print(f"File   : {md_path.relative_to(PROJECT_ROOT)}")
     print(f"Setup  : {'Setup' if setup_num == 1 else f'Setup{setup_num}'}")

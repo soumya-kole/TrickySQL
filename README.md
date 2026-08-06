@@ -1,6 +1,6 @@
 # TRICKY SQL
 
-This repository contains tricky and advanced SQL problems frequently asked in job interviews, solved in MySQL. Each problem lives in a single `.md` file that bundles the problem description, the data setup, and one or more query solutions.
+This repository contains tricky and advanced SQL problems frequently asked in job interviews, solved in MySQL. General problems each live in a single `.md` file that bundles the problem description, the data setup, and one or more query solutions. Problems under `SQLs/leetcode/` and `SQLs/other_problems/` instead live one-per-folder, split across `description.md`, `setup.md`, and `solutions.md` — see [Problem file structure](#problem-file-structure).
 
 ## Prerequisite
 
@@ -29,7 +29,7 @@ You can use any GUI tool like DBeaver, connecting with user/password `admin/admi
 
 ## Problem file structure
 
-Every problem file follows the same layout:
+General problems (`SQLs/*.md`) follow this layout:
 
 ```
 ## Description   ← the problem statement
@@ -39,28 +39,42 @@ Every problem file follows the same layout:
 
 A file may also define additional setups (`## Setup2`, `## Setup3`, …) holding alternative datasets — for example, an edge-case dataset that exercises a tricky path the default data does not.
 
+Problems under `SQLs/leetcode/` and `SQLs/other_problems/` instead live one-per-folder, each containing:
+
+- `description.md` — the problem statement and examples
+- `setup.md` — the `## Setup` (and optional `## Setup2`, …) `sql` block(s)
+- `solutions.md` — one or more named solutions, each in its own `sql` block
+
+`SQLs/leetcode/` folders are named `<zero-padded LeetCode number>-<kebab-case-title>` (e.g. `2142-the-number-of-passengers-in-each-bus-i`); `SQLs/other_problems/` folders (non-LeetCode or modified problems) are named `<kebab-case-title>` (e.g. `exchange-seats-within-department`).
+
 ## Loading problem data
 
-Use `make setup` to load a problem's data into the running MySQL instance. It extracts the `## Setup` SQL block from the file and executes it.
+Use `make setup` to load a problem's data into the running MySQL instance.
 
 ```bash
-# By filename (all subdirectories are searched automatically)
+# General SQLs/*.md problems — by filename (all subdirectories are searched automatically)
 make setup The_Number_of_Passengers_in_Each_Bus_1.md
 
 # By relative path
-make setup SQLs/leetcode/The_Number_of_Passengers_in_Each_Bus_2.md
+make setup SQLs/window_frame.md
+
+# SQLs/leetcode/ and SQLs/other_problems/ problems — by problem folder name
+make setup 2142-the-number-of-passengers-in-each-bus-i
+make setup exchange-seats-within-department
 ```
 
 To load an alternative setup, pass its number as a second argument. With no number the default `## Setup` is used:
 
 ```bash
-make setup The_Number_of_Passengers_in_Each_Bus_2.md      # uses ## Setup
-make setup The_Number_of_Passengers_in_Each_Bus_2.md 2    # uses ## Setup2
+make setup The_Number_of_Passengers_in_Each_Bus_2.md          # uses ## Setup
+make setup 2153-the-number-of-passengers-in-each-bus-ii 2     # uses ## Setup2
 ```
 
 ## How to add a new problem
 
-1. Create `SQLs/leetcode/<Problem_Name>.md`.
+**General problem:**
+
+1. Create `SQLs/<Problem_Name>.md`.
 2. Add the three sections in order:
    - `## Description` — the problem statement.
    - `## Setup` — a self-contained `sql` block. Begin with `CREATE DATABASE IF NOT EXISTS demo; USE demo;`, then `DROP` / `CREATE` / `INSERT` the tables in dependency order so the block is safe to re-run.
@@ -72,12 +86,32 @@ make setup The_Number_of_Passengers_in_Each_Bus_2.md 2    # uses ## Setup2
    make setup <Problem_Name>.md
    ```
 
+**LeetCode problem:**
+
+1. Create `SQLs/leetcode/<num>-<kebab-case-title>/` with `description.md`, `setup.md`, and `solutions.md` following the structure above.
+2. `setup.md`'s `## Setup` block follows the same self-contained rule as above; add `## Setup2`, … there for alternative datasets.
+3. Verify the data loads cleanly before committing:
+
+   ```bash
+   make setup <num>-<kebab-case-title>
+   ```
+
+**Other (non-LeetCode or modified) problem:**
+
+1. Create `SQLs/other_problems/<kebab-case-title>/` with `description.md`, `setup.md`, and `solutions.md`, same structure and rules as the LeetCode case (no number prefix).
+2. Verify the data loads cleanly before committing:
+
+   ```bash
+   make setup <kebab-case-title>
+   ```
+
 ## SQLs
 
 1. [explode implementation](SQLs/explode_demo.sql)
 2. [windowing](SQLs/window_frame.md)
-3. [exchange seat](SQLs/exchange_seat.md)
+3. [exchange seat](SQLs/other_problems/exchange-seats-within-department/description.md)
 4. [Customer with increasing purchase](SQLs/CustomerWithIncreasingPurchase.md)
 5. [Hierarchical query in mysql](SQLs/connect_by_implementation_mysql.md)
-6. [The Number of Passengers in Each Bus I](SQLs/leetcode/The_Number_of_Passengers_in_Each_Bus_1.md)
-7. [The Number of Passengers in Each Bus II](SQLs/leetcode/The_Number_of_Passengers_in_Each_Bus_2.md)
+6. [The Number of Passengers in Each Bus I](SQLs/leetcode/2142-the-number-of-passengers-in-each-bus-i/description.md)
+7. [The Number of Passengers in Each Bus II](SQLs/leetcode/2153-the-number-of-passengers-in-each-bus-ii/description.md)
+8. [Find Median Given Frequency of Numbers](SQLs/leetcode/0571-find-median-given-frequency-of-numbers/description.md)
