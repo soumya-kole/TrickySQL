@@ -13,13 +13,13 @@ Go to the Meta folder of the cloned repo
 Execute following command 
 
 ```bash
-docker-compose up -d
+docker compose up -d
 ```
 
 Shutdown database using following command from same directory
 
 ```bash
-docker-compose down
+docker compose down
 ```
 
 ## Connect Database

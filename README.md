@@ -12,13 +12,13 @@ This repository contains tricky and advanced SQL problems frequently asked in jo
 Clone the repository and go to the root folder of the cloned repo. Start the database with:
 
 ```bash
-docker-compose up -d
+docker compose up -d
 ```
 
 Shut it down from the same directory with:
 
 ```bash
-docker-compose down
+docker compose down
 ```
 
 This exposes MySQL on port `3306`. There is a second, independent MySQL instance under `Meta/` for the Meta Data Engineering problems — start/stop it the same way from inside that directory.
