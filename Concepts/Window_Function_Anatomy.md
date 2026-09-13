@@ -422,6 +422,79 @@ Note the outer `ORDER BY id`: without it MySQL is free to return rows in whateve
 the last window it evaluated left them in (here, the `DESC` one). Window functions
 never define output order — only an outer `ORDER BY` does.
 
+## Step 6: `LAG`/`LEAD` — offset functions, not frame functions
+
+`LAG`/`LEAD` look like close cousins of `FIRST_VALUE`/`LAST_VALUE`, but they belong to
+a different family: they only use `PARTITION BY`/`ORDER BY` and completely ignore any
+`ROWS BETWEEN` clause. Adding a frame to a `LAG` call changes nothing — there is no
+frame-default trap to fix here, unlike Step 5e.
+
+That said, `LAG`/`LEAD` have their own gap: MySQL has no `IGNORE NULLS` option (some
+engines — Snowflake, BigQuery, Oracle — do), so `LAG` always returns whatever sits in
+the *literal* previous row, `NULL` included. That makes "carry forward the last known
+value" — filling gaps with the most recent non-`NULL` value, a very common reporting
+need — impossible with `LAG` alone.
+
+The fix is the **running-max-of-a-group-id** trick: build a group id that only
+advances on non-`NULL` rows, then let `MAX` (which ignores `NULL`) pull that group's
+one real value across every row in it.
+
+```sql
+WITH src AS (
+    SELECT 1 AS id, 'OPEN' AS status UNION ALL
+    SELECT 2, NULL UNION ALL
+    SELECT 3, NULL UNION ALL
+    SELECT 4, 'CLOSED' UNION ALL
+    SELECT 5, NULL UNION ALL
+    SELECT 6, 'OPEN' UNION ALL
+    SELECT 7, NULL
+),
+grouped AS (
+    SELECT
+        id,
+        status,
+        COUNT(status) OVER (ORDER BY id) AS grp
+    FROM src
+)
+SELECT
+    id,
+    status,
+    grp,
+    MAX(status) OVER (PARTITION BY grp) AS status_filled,
+    LAG(status) OVER (ORDER BY id)      AS plain_lag
+FROM grouped
+ORDER BY id;
+```
+
+```
++----+--------+-----+----------------+-----------+
+| id | status | grp | status_filled  | plain_lag |
++----+--------+-----+----------------+-----------+
+|  1 | OPEN   |   1 | OPEN           | NULL      |
+|  2 | NULL   |   1 | OPEN           | OPEN      |
+|  3 | NULL   |   1 | OPEN           | NULL      |
+|  4 | CLOSED |   2 | CLOSED         | NULL      |
+|  5 | NULL   |   2 | CLOSED         | CLOSED    |
+|  6 | OPEN   |   3 | OPEN           | NULL      |
+|  7 | NULL   |   3 | OPEN           | OPEN      |
++----+--------+-----+----------------+-----------+
+```
+
+`COUNT(status) OVER (ORDER BY id)` is a running count of *non-`NULL`* values seen so
+far — `COUNT` skips `NULL`s, so it only ticks up on a real value and holds steady
+across every `NULL` that follows, which is exactly what carves the rows into groups:
+each group is one real value plus the run of `NULL`s immediately after it. Because
+`MAX` also ignores `NULL`, `MAX(status) OVER (PARTITION BY grp)` reduces each group
+down to its one non-`NULL` value and broadcasts it to every row in the group — no
+`ORDER BY` needed inside that `OVER()`, since every row in a group is meant to land on
+the same answer.
+
+`plain_lag` shows why a plain `LAG` can't do this job: at row 3 it dutifully returns
+row 2's value, which is `NULL` — it looks back exactly one physical row, it does not
+"keep looking back until it finds something." `status_filled` is the general-purpose
+answer whenever a `LAG`-family question turns out to actually be "what was the last
+*known* value," not "what was the previous row."
+
 ## Putting it together
 
 Reading a window function call from the inside out:

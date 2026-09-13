@@ -19,27 +19,11 @@ FROM Calls
 GROUP BY person1, person2;
 ```
 
-## Solution 2: `IF()` instead of `LEAST` / `GREATEST`
+## Solution 2: `CASE` instead of `LEAST` / `GREATEST`
 
 Same idea, spelled out with a conditional. Useful on engines that lack
 `LEAST`/`GREATEST` (or when you need to carry along other columns from the "smaller"
-side, where a plain min/max would not work).
-
-#### MySQL
-
-```sql
-SELECT
-    IF(from_id < to_id, from_id, to_id) AS person1,
-    IF(from_id < to_id, to_id, from_id) AS person2,
-    COUNT(*)                            AS call_count,
-    SUM(duration)                       AS total_duration
-FROM Calls
-GROUP BY person1, person2;
-```
-
-## Solution 3: `CASE` expression
-
-The standard-SQL spelling of Solution 2. `IF()` is MySQL-specific; `CASE` runs
+side, where a plain min/max would not work). `CASE` is standard SQL, so this runs
 unchanged on PostgreSQL, SQL Server, Oracle, SQLite, etc.
 
 #### MySQL
