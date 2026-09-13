@@ -1,0 +1,7 @@
+#!/usr/bin/env bash
+# Blocks commits that add a SQLs/ problem without a corresponding README.md link.
+# Installed via `make install-hooks` (sets git's core.hooksPath to this directory).
+set -e
+
+REPO_ROOT="$(git rev-parse --show-toplevel)"
+python3 "$REPO_ROOT/scripts/check_readme_links.py"

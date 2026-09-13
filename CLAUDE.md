@@ -75,14 +75,27 @@ A file may also include optional `## Setup2`, `## Setup3`, … sections, each a 
 2. The `## Setup` block must be self-contained: `CREATE DATABASE IF NOT EXISTS demo; USE demo;` then `DROP`/`CREATE`/`INSERT` in dependency order so it is safe to re-run.
 3. (Optional) Add `## Setup2`, `## Setup3`, … sections for alternative datasets, following the same self-contained pattern.
 4. `make setup <filename.md>` must run cleanly before committing.
+5. Add a row for it to the **General problems** table in the [SQLs section of README.md](README.md#sqls) — see [Updating README.md](#updating-readmemd) below.
 
 **LeetCode problem:**
 
 1. Create `SQLs/leetcode/<num>-<kebab-case-title>/` with `description.md`, `setup.md`, `solutions.md` following the structure above.
 2. `setup.md`'s `## Setup` block must be self-contained, same rule as above; add `## Setup2`, … there for alternative datasets.
 3. `make setup <num>-<kebab-case-title>` must run cleanly before committing.
+4. Add a row for it to the **LeetCode problems** table in the [SQLs section of README.md](README.md#sqls), keeping the table sorted by problem number — see [Updating README.md](#updating-readmemd) below.
 
 **Other (non-LeetCode or modified) problem:**
 
 1. Create `SQLs/other_problems/<kebab-case-title>/` with `description.md`, `setup.md`, `solutions.md`, same structure and rules as the LeetCode case (no number prefix).
 2. `make setup <kebab-case-title>` must run cleanly before committing.
+3. Add a row for it to the **Other problems** table in the [SQLs section of README.md](README.md#sqls) — see [Updating README.md](#updating-readmemd) below.
+
+## Updating README.md
+
+Every file/folder added under `SQLs/` must get a row in the matching table (General / LeetCode / Other problems) in README.md's `## SQLs` section, with three columns:
+
+- **SQL Link** — link to the file itself for a general problem, or to `description.md` for a `leetcode`/`other_problems` folder.
+- **Level** — Easy/Medium/Hard. For LeetCode problems, use the problem's actual LeetCode difficulty (don't guess — many locked/older problems are rated differently than intuition suggests; verify via web search if unsure). For non-LeetCode problems, use your own judgment of query complexity.
+- **Tags** — one or more short tags describing the SQL techniques used (e.g. `Recursive CTE`, `Window Functions`, `Pivot Table`, `Date Manipulation`, `Gaps & Islands`, `Self Join`), derived from what the solution(s) actually do.
+
+A git pre-commit hook (`scripts/check_readme_links.py`, installed via `make install-hooks`) blocks commits that add a `SQLs/` problem without a corresponding link in README.md — but it only checks that a link exists, not that Level/Tags are filled in correctly, so still add the full row rather than relying on the hook to catch a missing link after the fact.
