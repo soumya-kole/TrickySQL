@@ -107,13 +107,48 @@ make setup 2153-the-number-of-passengers-in-each-bus-ii 2     # uses ## Setup2
 
 ## SQLs
 
-1. [explode implementation](SQLs/explode_demo.sql)
-2. [windowing](SQLs/window_frame.md)
-3. [exchange seat](SQLs/other_problems/exchange-seats-within-department/description.md)
-4. [Customer with increasing purchase](SQLs/CustomerWithIncreasingPurchase.md)
-5. [Hierarchical query in mysql](SQLs/connect_by_implementation_mysql.md)
-6. [The Number of Passengers in Each Bus I](SQLs/leetcode/2142-the-number-of-passengers-in-each-bus-i/description.md)
-7. [The Number of Passengers in Each Bus II](SQLs/leetcode/2153-the-number-of-passengers-in-each-bus-ii/description.md)
-8. [Find Median Given Frequency of Numbers](SQLs/leetcode/0571-find-median-given-frequency-of-numbers/description.md)
-9. [Consecutive Available Seats](SQLs/leetcode/0603-consecutive-available-seats/description.md)
-10. [Generate the Invoice](SQLs/leetcode/2362-generate-the-invoice/description.md)
+### General problems
+
+| SQL Link | Level | Tags |
+|---|---|---|
+| [Explode Implementation](SQLs/explode_demo.sql) | Medium | Recursive CTE, String Manipulation |
+| [Moving Average with Window Frames](SQLs/window_frame.md) | Easy | Window Functions, Moving Average |
+| [Hierarchical Query in MySQL (CONNECT BY equivalent)](SQLs/connect_by_implementation_mysql.md) | Medium | Recursive CTE, Hierarchical Query |
+| [Customers With Strictly Increasing Purchases](SQLs/CustomerWithIncreasingPurchase.md) | Hard | Window Functions, Date Manipulation, Gaps & Islands |
+| [Paired Products (Frequently Bought Together)](SQLs/PairedProducts.md) | Medium | Self Join, Aggregation, Top-N |
+| [Split Full Name into First/Middle/Last](SQLs/first_middle_last_name.sql) | Easy | String Manipulation |
+| [Match Win/Loss Summary](SQLs/match_win_summary.sql) | Easy | Union, Aggregation, CASE Expressions |
+| [Start and End Location of a Trip](SQLs/start_end_location.sql) | Medium | Full Outer Join, Graph Traversal |
+
+### LeetCode problems
+
+| SQL Link | Level | Tags |
+|---|---|---|
+| [180. Consecutive Numbers](SQLs/leetcode/0180-consecutive-numbers/description.md) | Medium | Window Functions, Gaps & Islands |
+| [197. Rising Temperature](SQLs/leetcode/0197-rising-temperature/description.md) | Easy | Self Join, Window Functions, Date Manipulation |
+| [571. Find Median Given Frequency of Numbers](SQLs/leetcode/0571-find-median-given-frequency-of-numbers/description.md) | Hard | Recursive CTE, Window Functions, Median |
+| [579. Find Cumulative Salary of an Employee](SQLs/leetcode/0579-find-cumulative-salary-of-an-employee/description.md) | Hard | Window Functions, Ranking, Running Total |
+| [603. Consecutive Available Seats](SQLs/leetcode/0603-consecutive-available-seats/description.md) | Easy | Self Join, Window Functions, Gaps & Islands |
+| [618. Students Report By Geography](SQLs/leetcode/0618-students-report-by-geography/description.md) | Hard | Window Functions, Pivot Table |
+| [1280. Students and Examinations](SQLs/leetcode/1280-students-and-examinations/description.md) | Easy | Cross Join, Aggregation |
+| [1384. Total Sales Amount by Year](SQLs/leetcode/1384-total-sales-amount-by-year/description.md) | Hard | Recursive CTE, Date Manipulation |
+| [1445. Apples & Oranges](SQLs/leetcode/1445-apples-oranges/description.md) | Medium | Pivot Table, Aggregation, CASE Expressions |
+| [1479. Sales by Day of the Week](SQLs/leetcode/1479-sales-by-day-of-the-week/description.md) | Hard | Pivot Table, Date Manipulation, CASE Expressions |
+| [1635. Hopper Company Queries I](SQLs/leetcode/1635-hopper-company-queries-i/description.md) | Hard | Recursive CTE, Date Manipulation |
+| [1645. Hopper Company Queries II](SQLs/leetcode/1645-hopper-company-queries-ii/description.md) | Hard | Recursive CTE, Date Manipulation, Pivot Table |
+| [1651. Hopper Company Queries III](SQLs/leetcode/1651-hopper-company-queries-iii/description.md) | Hard | Recursive CTE, Window Functions, Moving Average |
+| [1699. Number of Calls Between Two Persons](SQLs/leetcode/1699-number-of-calls-between-two-persons/description.md) | Medium | CASE Expressions, Aggregation |
+| [1767. Find the Subtasks That Did Not Execute](SQLs/leetcode/1767-find-the-subtasks-that-did-not-execute/description.md) | Hard | Recursive CTE |
+| [1972. First and Last Call On the Same Day](SQLs/leetcode/1972-first-and-last-call-on-the-same-day/description.md) | Hard | Window Functions, Union |
+| [2004. The Number of Seniors and Juniors to Join the Company](SQLs/leetcode/2004-the-number-of-seniors-and-juniors-to-join-the-company/description.md) | Hard | Window Functions, Running Total |
+| [2010. The Number of Seniors and Juniors to Join the Company II](SQLs/leetcode/2010-the-number-of-seniors-and-juniors-to-join-the-company-ii/description.md) | Hard | Window Functions, Running Total |
+| [2142. The Number of Passengers in Each Bus I](SQLs/leetcode/2142-the-number-of-passengers-in-each-bus-i/description.md) | Medium | Self Join, Window Functions |
+| [2153. The Number of Passengers in Each Bus II](SQLs/leetcode/2153-the-number-of-passengers-in-each-bus-ii/description.md) | Hard | Recursive CTE, Window Functions, Running Total |
+| [2362. Generate the Invoice](SQLs/leetcode/2362-generate-the-invoice/description.md) | Hard | Window Functions, Aggregation |
+| [2474. Customers With Strictly Increasing Purchases](SQLs/leetcode/2474-customers-with-strictly-increasing-purchases/description.md) | Hard | Window Functions, Recursive CTE, Date Manipulation, Gaps & Islands |
+
+### Other problems (non-LeetCode or modified)
+
+| SQL Link | Level | Tags |
+|---|---|---|
+| [Exchange Seats (within Department)](SQLs/other_problems/exchange-seats-within-department/description.md) | Medium | Window Functions, CASE Expressions |
