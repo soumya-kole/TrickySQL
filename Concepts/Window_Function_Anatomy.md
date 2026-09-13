@@ -422,6 +422,54 @@ Note the outer `ORDER BY id`: without it MySQL is free to return rows in whateve
 the last window it evaluated left them in (here, the `DESC` one). Window functions
 never define output order — only an outer `ORDER BY` does.
 
+### 5f. `RANGE` with a value offset — when a row-count window is wrong
+
+`ROWS BETWEEN 2 PRECEDING AND CURRENT ROW` means "the 2 previous **physical rows**" —
+not "the last 2 days". If the data has gaps (a day with no activity), `ROWS` quietly
+reaches further back in time than intended, because it just counts rows, not calendar
+distance. `RANGE` with a numeric/`INTERVAL` offset asks the question in terms of the
+`ORDER BY` *value* itself, so it stays correct regardless of gaps — use it whenever the
+window is supposed to mean "the last N units of the order-by value," not "the last N
+rows."
+
+```sql
+WITH daily AS (
+    SELECT CAST('2024-01-01' AS DATE) AS d, 100 AS amount UNION ALL
+    SELECT CAST('2024-01-02' AS DATE), 200 UNION ALL
+    SELECT CAST('2024-01-04' AS DATE), 150 UNION ALL   -- gap: no sales on 01-03
+    SELECT CAST('2024-01-05' AS DATE), 300
+)
+SELECT d, amount,
+       SUM(amount) OVER (
+           ORDER BY d
+           ROWS BETWEEN 2 PRECEDING AND CURRENT ROW
+       ) AS rows_3,
+       SUM(amount) OVER (
+           ORDER BY d
+           RANGE BETWEEN INTERVAL 2 DAY PRECEDING AND CURRENT ROW
+       ) AS range_2days
+FROM daily;
+```
+
+```
++------------+--------+--------+-------------+
+| d          | amount | rows_3 | range_2days |
++------------+--------+--------+-------------+
+| 2024-01-01 |    100 |    100 |         100 |
+| 2024-01-02 |    200 |    300 |         300 |
+| 2024-01-04 |    150 |    450 |         350 |
+| 2024-01-05 |    300 |    650 |         450 |
++------------+--------+--------+-------------+
+```
+
+On `2024-01-04`, `rows_3` grabs the 2 preceding *rows* — `01-01` and `01-02` — which
+together span 3 calendar days, not 2. `range_2days` instead looks at the value of `d`
+and correctly keeps only rows where `d` is within 2 days of `01-04`, i.e. `01-02` and
+`01-04` (`01-03` doesn't exist, so it contributes nothing) — giving a true "trailing
+2-day" sum. This is also why `RANGE` with a numeric/interval bound only allows a single
+`ORDER BY` column: the bound is computed by adding/subtracting the offset from that
+column's value, which is ambiguous with more than one sort key.
+
 ## Step 6: `LAG`/`LEAD` — offset functions, not frame functions
 
 `LAG`/`LEAD` look like close cousins of `FIRST_VALUE`/`LAST_VALUE`, but they belong to
