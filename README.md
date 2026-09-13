@@ -125,11 +125,7 @@ A pre-commit hook (enabled via `make install-hooks`, see [Prerequisite](#prerequ
 | [Explode Implementation](SQLs/explode_demo.sql) | Medium | Recursive CTE, String Manipulation |
 | [Moving Average with Window Frames](SQLs/window_frame.md) | Easy | Window Functions, Moving Average |
 | [Hierarchical Query in MySQL (CONNECT BY equivalent)](SQLs/connect_by_implementation_mysql.md) | Medium | Recursive CTE, Hierarchical Query |
-| [Customers With Strictly Increasing Purchases](SQLs/CustomerWithIncreasingPurchase.md) | Hard | Window Functions, Date Manipulation, Gaps & Islands |
 | [Paired Products (Frequently Bought Together)](SQLs/PairedProducts.md) | Medium | Self Join, Aggregation, Top-N |
-| [Split Full Name into First/Middle/Last](SQLs/first_middle_last_name.sql) | Easy | String Manipulation |
-| [Match Win/Loss Summary](SQLs/match_win_summary.sql) | Easy | Union, Aggregation, CASE Expressions |
-| [Start and End Location of a Trip](SQLs/start_end_location.sql) | Medium | Full Outer Join, Graph Traversal |
 
 ### LeetCode problems
 
@@ -175,3 +171,6 @@ A pre-commit hook (enabled via `make install-hooks`, see [Prerequisite](#prerequ
 | SQL Link | Level | Tags |
 |---|---|---|
 | [Exchange Seats (within Department)](SQLs/other_problems/exchange-seats-within-department/description.md) | Medium | Window Functions, CASE Expressions |
+| [Match Win/Loss Summary](SQLs/other_problems/match-win-summary/description.md) | Easy | Union, Aggregation, CASE Expressions |
+| [Split Full Name into First/Middle/Last](SQLs/other_problems/first-middle-last-name/description.md) | Easy | String Manipulation, CASE Expressions |
+| [Start and End Location of a Trip](SQLs/other_problems/start-end-location-of-a-trip/description.md) | Medium | Anti Join, Aggregation, CASE Expressions |
