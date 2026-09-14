@@ -575,4 +575,3 @@ Two rules of thumb that avoid most window-function bugs:
 
 - [MySQL — Window Function Concepts and Syntax](https://dev.mysql.com/doc/refman/8.0/en/window-functions-usage.html)
 - [MySQL — Window Function Frame Specification](https://dev.mysql.com/doc/refman/8.0/en/window-functions-frames.html)
-- [window_frame.md](../SQLs/window_frame.md) — moving averages on stock data

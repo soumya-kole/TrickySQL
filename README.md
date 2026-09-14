@@ -1,6 +1,6 @@
 # TRICKY SQL
 
-This repository contains tricky and advanced SQL problems frequently asked in job interviews, solved in MySQL. General problems each live in a single `.md` file that bundles the problem description, the data setup, and one or more query solutions. Problems under `SQLs/leetcode/` and `SQLs/other_problems/` instead live one-per-folder, split across `description.md`, `setup.md`, and `solutions.md` — see [Problem file structure](#problem-file-structure).
+This repository contains tricky and advanced SQL problems frequently asked in job interviews, solved in MySQL. Problems under `SQLs/leetcode/` and `SQLs/other_problems/` live one-per-folder, split across `description.md`, `setup.md`, and `solutions.md` — see [Problem file structure](#problem-file-structure). `Meta/` (a separate corpus of Meta Data Engineering interview problems) instead uses a single combined `.md` file per problem.
 
 ## Prerequisite
 
@@ -30,17 +30,7 @@ You can use any GUI tool like DBeaver, connecting with user/password `admin/admi
 
 ## Problem file structure
 
-General problems (`SQLs/*.md`) follow this layout:
-
-```
-## Description   ← the problem statement
-## Setup         ← DDL + INSERT statements in a ```sql block
-## Solutions     ← one or more named solutions in ```sql blocks
-```
-
-A file may also define additional setups (`## Setup2`, `## Setup3`, …) holding alternative datasets — for example, an edge-case dataset that exercises a tricky path the default data does not.
-
-Problems under `SQLs/leetcode/` and `SQLs/other_problems/` instead live one-per-folder, each containing:
+Problems under `SQLs/leetcode/` and `SQLs/other_problems/` live one-per-folder, each containing:
 
 - `description.md` — the problem statement and examples
 - `setup.md` — the `## Setup` (and optional `## Setup2`, …) `sql` block(s)
@@ -48,46 +38,30 @@ Problems under `SQLs/leetcode/` and `SQLs/other_problems/` instead live one-per-
 
 `SQLs/leetcode/` folders are named `<zero-padded LeetCode number>-<kebab-case-title>` (e.g. `2142-the-number-of-passengers-in-each-bus-i`); `SQLs/other_problems/` folders (non-LeetCode or modified problems) are named `<kebab-case-title>` (e.g. `exchange-seats-within-department`).
 
+`Meta/` problems instead follow a single-file layout (`## Description`, `## Setup`, `## Solutions`, and optional `## Setup2`, `## Setup3`, … sections for alternative datasets).
+
 ## Loading problem data
 
 Use `make setup` to load a problem's data into the running MySQL instance.
 
 ```bash
-# General SQLs/*.md problems — by filename (all subdirectories are searched automatically)
-make setup The_Number_of_Passengers_in_Each_Bus_1.md
-
-# By relative path
-make setup SQLs/window_frame.md
-
 # SQLs/leetcode/ and SQLs/other_problems/ problems — by problem folder name
 make setup 2142-the-number-of-passengers-in-each-bus-i
 make setup exchange-seats-within-department
+
+# A single-file general problem (e.g. under Meta/) — by filename (searches all
+# subdirectories automatically) or by relative path
+make setup My_Problem.md
+make setup Meta/My_Problem.md
 ```
 
 To load an alternative setup, pass its number as a second argument. With no number the default `## Setup` is used:
 
 ```bash
-make setup The_Number_of_Passengers_in_Each_Bus_2.md          # uses ## Setup
 make setup 2153-the-number-of-passengers-in-each-bus-ii 2     # uses ## Setup2
 ```
 
 ## How to add a new problem
-
-**General problem:**
-
-1. Create `SQLs/<Problem_Name>.md`.
-2. Add the three sections in order:
-   - `## Description` — the problem statement.
-   - `## Setup` — a self-contained `sql` block. Begin with `CREATE DATABASE IF NOT EXISTS demo; USE demo;`, then `DROP` / `CREATE` / `INSERT` the tables in dependency order so the block is safe to re-run.
-   - `## Solutions` — one or more solutions, each in its own `sql` block.
-3. (Optional) Add a `## Setup2`, `## Setup3`, … section for any alternative dataset, following the same self-contained pattern as `## Setup`.
-4. Verify the data loads cleanly before committing:
-
-   ```bash
-   make setup <Problem_Name>.md
-   ```
-
-5. Add a row for it to the **General problems** table in the [SQLs](#sqls) section below.
 
 **LeetCode problem:**
 
@@ -112,20 +86,11 @@ make setup 2153-the-number-of-passengers-in-each-bus-ii 2     # uses ## Setup2
 
 3. Add a row for it to the **Other problems** table in the [SQLs](#sqls) section below.
 
-Each table row needs a **SQL Link** (the file itself for a general problem, or `description.md` for a folder-based one), a **Level** (for LeetCode problems, use the problem's real LeetCode difficulty rather than guessing), and one or more **Tags** describing the SQL techniques the solution uses (e.g. `Recursive CTE`, `Window Functions`, `Pivot Table`).
+Each table row needs a **SQL Link** (`description.md` inside the problem folder), a **Level** (for LeetCode problems, use the problem's real LeetCode difficulty rather than guessing), and one or more **Tags** describing the SQL techniques the solution uses (e.g. `Recursive CTE`, `Window Functions`, `Pivot Table`).
 
 A pre-commit hook (enabled via `make install-hooks`, see [Prerequisite](#prerequisite)) blocks commits that add a problem under `SQLs/` without a matching link somewhere in this README — but it only checks that a link exists, not that Level/Tags are correct, so don't rely on it in place of adding the full row.
 
 ## SQLs
-
-### General problems
-
-| SQL Link | Level | Tags |
-|---|---|---|
-| [Explode Implementation](SQLs/explode_demo.sql) | Medium | Recursive CTE, String Manipulation |
-| [Moving Average with Window Frames](SQLs/window_frame.md) | Easy | Window Functions, Moving Average |
-| [Hierarchical Query in MySQL (CONNECT BY equivalent)](SQLs/connect_by_implementation_mysql.md) | Medium | Recursive CTE, Hierarchical Query |
-| [Paired Products (Frequently Bought Together)](SQLs/PairedProducts.md) | Medium | Self Join, Aggregation, Top-N |
 
 ### LeetCode problems
 
@@ -170,6 +135,9 @@ A pre-commit hook (enabled via `make install-hooks`, see [Prerequisite](#prerequ
 
 | SQL Link | Level | Tags |
 |---|---|---|
+| [Explode Implementation](SQLs/other_problems/explode-implementation/description.md) | Medium | Recursive CTE, String Manipulation |
+| [Hierarchical Query in MySQL (CONNECT BY equivalent)](SQLs/other_problems/connect-by-hierarchical-query/description.md) | Medium | Recursive CTE, Hierarchical Query |
+| [Paired Products (Frequently Bought Together)](SQLs/other_problems/paired-products-frequently-bought-together/description.md) | Medium | Self Join, Aggregation, Top-N |
 | [Exchange Seats (within Department)](SQLs/other_problems/exchange-seats-within-department/description.md) | Medium | Window Functions, CASE Expressions |
 | [Match Win/Loss Summary](SQLs/other_problems/match-win-summary/description.md) | Easy | Union, Aggregation, CASE Expressions |
 | [Split Full Name into First/Middle/Last](SQLs/other_problems/first-middle-last-name/description.md) | Easy | String Manipulation, CASE Expressions |

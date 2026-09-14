@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## What this repo is
 
-A collection of advanced SQL problems (interview prep and LeetCode) solved in MySQL. General interview-prep problems (`SQLs/*.md`) each live in a single `.md` file combining problem description, sample data setup, and one or more query solutions. Problems under `SQLs/leetcode/` and `SQLs/other_problems/` instead live one-per-folder, split into three files — see [.md file structure](#md-file-structure) below.
+A collection of advanced SQL problems (interview prep and LeetCode) solved in MySQL. Problems under `SQLs/leetcode/` and `SQLs/other_problems/` live one-per-folder, split into three files — see [.md file structure](#md-file-structure) below. `Meta/` (a separate corpus of Meta Data Engineering interview problems) instead uses a single combined `.md` file per problem.
 
 ## Database environment
 
@@ -12,7 +12,7 @@ Two independent MySQL instances, each started with `docker-compose up -d` from t
 
 | Directory | Purpose | Credentials |
 |-----------|---------|-------------|
-| `/` (root) | General / LeetCode problems | admin/admin (GUI), root/my-secret-pw (scripts) |
+| `/` (root) | LeetCode / other problems | admin/admin (GUI), root/my-secret-pw (scripts) |
 | `Meta/` | Meta Data Engineering interview problems | admin/admin |
 
 Both expose MySQL on port 3306. Start/stop from the relevant directory:
@@ -25,15 +25,14 @@ docker-compose down
 ## Loading problem data
 
 ```bash
-# General SQLs/*.md problems — by filename (searches all subdirectories automatically)
-make setup The_Number_of_Passengers_in_Each_Bus_1.md
-
-# By relative path
-make setup SQLs/window_frame.md
-
 # SQLs/leetcode/ and SQLs/other_problems/ problems — by problem folder name
 make setup 2142-the-number-of-passengers-in-each-bus-i
 make setup exchange-seats-within-department
+
+# A single-file general problem (e.g. under Meta/) — by filename (searches all
+# subdirectories automatically) or by relative path
+make setup My_Problem.md
+make setup Meta/My_Problem.md
 ```
 
 This runs `scripts/setup_sql.py` via `uv`. For a `.md` target it extracts the `## Setup` SQL block from that file; for a folder-name target (`SQLs/leetcode/`, `SQLs/other_problems/`) it reads `setup.md` inside that folder instead. Either way, the SQL runs against `127.0.0.1:3306` as root.
@@ -41,7 +40,6 @@ This runs `scripts/setup_sql.py` via `uv`. For a `.md` target it extracts the `#
 A setup source may define multiple setups (`## Setup`, `## Setup2`, `## Setup3`, …) holding alternative datasets. `make setup` loads `## Setup` by default; pass a number as the second argument to load another:
 
 ```bash
-make setup The_Number_of_Passengers_in_Each_Bus_2.md      # uses ## Setup
 make setup 2153-the-number-of-passengers-in-each-bus-ii 2 # uses ## Setup2
 ```
 
@@ -69,14 +67,6 @@ A file may also include optional `## Setup2`, `## Setup3`, … sections, each a 
 
 ## Adding a new problem
 
-**General problem:**
-
-1. Create `SQLs/<Problem_Name>.md` following the general structured format above.
-2. The `## Setup` block must be self-contained: `CREATE DATABASE IF NOT EXISTS demo; USE demo;` then `DROP`/`CREATE`/`INSERT` in dependency order so it is safe to re-run.
-3. (Optional) Add `## Setup2`, `## Setup3`, … sections for alternative datasets, following the same self-contained pattern.
-4. `make setup <filename.md>` must run cleanly before committing.
-5. Add a row for it to the **General problems** table in the [SQLs section of README.md](README.md#sqls) — see [Updating README.md](#updating-readmemd) below.
-
 **LeetCode problem:**
 
 1. Create `SQLs/leetcode/<num>-<kebab-case-title>/` with `description.md`, `setup.md`, `solutions.md` following the structure above.
@@ -92,9 +82,9 @@ A file may also include optional `## Setup2`, `## Setup3`, … sections, each a 
 
 ## Updating README.md
 
-Every file/folder added under `SQLs/` must get a row in the matching table (General / LeetCode / Other problems) in README.md's `## SQLs` section, with three columns:
+Every folder added under `SQLs/` must get a row in the matching table (LeetCode / Other problems) in README.md's `## SQLs` section, with three columns:
 
-- **SQL Link** — link to the file itself for a general problem, or to `description.md` for a `leetcode`/`other_problems` folder.
+- **SQL Link** — link to `description.md` inside the `leetcode`/`other_problems` folder.
 - **Level** — Easy/Medium/Hard. For LeetCode problems, use the problem's actual LeetCode difficulty (don't guess — many locked/older problems are rated differently than intuition suggests; verify via web search if unsure). For non-LeetCode problems, use your own judgment of query complexity.
 - **Tags** — one or more short tags describing the SQL techniques used (e.g. `Recursive CTE`, `Window Functions`, `Pivot Table`, `Date Manipulation`, `Gaps & Islands`, `Self Join`), derived from what the solution(s) actually do.
 
