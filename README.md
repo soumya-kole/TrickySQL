@@ -112,6 +112,7 @@ A pre-commit hook (enabled via `make install-hooks`, see [Prerequisite](#prerequ
 | [1270. All People Report to the Given Manager](SQLs/leetcode/1270-all-people-report-to-the-given-manager/description.md) | Medium | Self Join, Hierarchical Query |
 | [1280. Students and Examinations](SQLs/leetcode/1280-students-and-examinations/description.md) | Easy | Cross Join, Aggregation |
 | [1336. Number of Transactions per Visit](SQLs/leetcode/1336-number-of-transactions-per-visit/description.md) | Hard | Recursive CTE, Aggregation |
+| [1369. Get the Second Most Recent Activity](SQLs/leetcode/1369-get-the-second-most-recent-activity/description.md) | Hard | Window Functions, Ranking |
 | [1384. Total Sales Amount by Year](SQLs/leetcode/1384-total-sales-amount-by-year/description.md) | Hard | Recursive CTE, Date Manipulation |
 | [1412. Find the Quiet Students in All Exams](SQLs/leetcode/1412-find-the-quiet-students-in-all-exams/description.md) | Hard | Window Functions, Ranking |
 | [1440. Evaluate Boolean Expression](SQLs/leetcode/1440-evaluate-boolean-expression/description.md) | Medium | Self Join, CASE Expressions |
@@ -131,6 +132,7 @@ A pre-commit hook (enabled via `make install-hooks`, see [Prerequisite](#prerequ
 | [2010. The Number of Seniors and Juniors to Join the Company II](SQLs/leetcode/2010-the-number-of-seniors-and-juniors-to-join-the-company-ii/description.md) | Hard | Window Functions, Running Total |
 | [2142. The Number of Passengers in Each Bus I](SQLs/leetcode/2142-the-number-of-passengers-in-each-bus-i/description.md) | Medium | Self Join, Window Functions |
 | [2153. The Number of Passengers in Each Bus II](SQLs/leetcode/2153-the-number-of-passengers-in-each-bus-ii/description.md) | Hard | Recursive CTE, Window Functions, Running Total |
+| [2173. Longest Winning Streak](SQLs/leetcode/2173-longest-winning-streak/description.md) | Hard | Gaps & Islands, Window Functions |
 | [2199. Finding the Topic of Each Post](SQLs/leetcode/2199-finding-the-topic-of-each-post/description.md) | Hard | String Manipulation, Self Join, Aggregation |
 | [2362. Generate the Invoice](SQLs/leetcode/2362-generate-the-invoice/description.md) | Hard | Window Functions, Aggregation |
 | [2394. Employees With Deductions](SQLs/leetcode/2394-employees-with-deductions/description.md) | Medium | Date Manipulation, Aggregation |
