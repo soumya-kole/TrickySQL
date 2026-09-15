@@ -60,6 +60,10 @@ A file may also include optional `## Setup2`, `## Setup3`, … sections, each a 
 
 `SQLs/leetcode/` folders are named `<zero-padded LeetCode number>-<kebab-case-title>` (e.g. `2142-the-number-of-passengers-in-each-bus-i`) and the `description.md` heading is `# [NUM. Title](url)`. `SQLs/other_problems/` folders (non-LeetCode or modified problems) are named `<kebab-case-title>` (e.g. `exchange-seats-within-department`), no number prefix.
 
+## SQL style conventions
+
+When writing or reviewing solution SQL, invoke the `sql-style-conventions` skill for this repo's house style preferences (e.g. `CASE` over `IF`/`GREATEST`/`LEAST`, `SUBDATE`/`ADDDATE` over `DATE_SUB`/`DATE_ADD`).
+
 ## Adding a new problem
 
 **LeetCode problem:**
