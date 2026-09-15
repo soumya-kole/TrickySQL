@@ -4,18 +4,13 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## What this repo is
 
-A collection of advanced SQL problems (interview prep and LeetCode) solved in MySQL. Problems under `SQLs/leetcode/` and `SQLs/other_problems/` live one-per-folder, split into three files — see [.md file structure](#md-file-structure) below. `Meta/` (a separate corpus of Meta Data Engineering interview problems) instead uses a single combined `.md` file per problem.
+A collection of advanced SQL problems (interview prep and LeetCode) solved in MySQL. Problems under `SQLs/leetcode/` and `SQLs/other_problems/` live one-per-folder, split into three files — see [.md file structure](#md-file-structure) below.
 
 ## Database environment
 
-Two independent MySQL instances, each started with `docker-compose up -d` from their respective directory:
+A MySQL instance started with `docker-compose up -d` from the repo root. Credentials: admin/admin (GUI), root/my-secret-pw (scripts).
 
-| Directory | Purpose | Credentials |
-|-----------|---------|-------------|
-| `/` (root) | LeetCode / other problems | admin/admin (GUI), root/my-secret-pw (scripts) |
-| `Meta/` | Meta Data Engineering interview problems | admin/admin |
-
-Both expose MySQL on port 3306. Start/stop from the relevant directory:
+Exposes MySQL on port 3306. Start/stop with:
 
 ```bash
 docker-compose up -d
@@ -29,10 +24,10 @@ docker-compose down
 make setup 2142-the-number-of-passengers-in-each-bus-i
 make setup exchange-seats-within-department
 
-# A single-file general problem (e.g. under Meta/) — by filename (searches all
+# A single-file general problem — by filename (searches all
 # subdirectories automatically) or by relative path
 make setup My_Problem.md
-make setup Meta/My_Problem.md
+make setup SQLs/My_Problem.md
 ```
 
 This runs `scripts/setup_sql.py` via `uv`. For a `.md` target it extracts the `## Setup` SQL block from that file; for a folder-name target (`SQLs/leetcode/`, `SQLs/other_problems/`) it reads `setup.md` inside that folder instead. Either way, the SQL runs against `127.0.0.1:3306` as root.
@@ -47,7 +42,7 @@ Python dependencies are managed with `uv`. After cloning, run `uv sync` once to 
 
 ## .md file structure
 
-**General problems** (`SQLs/*.md`, `Meta/`) use a single structured file consumed by `make setup`:
+**General problems** (`SQLs/*.md`) use a single structured file consumed by `make setup`:
 
 ```
 ## Description   ← problem statement
@@ -72,20 +67,20 @@ A file may also include optional `## Setup2`, `## Setup3`, … sections, each a 
 1. Create `SQLs/leetcode/<num>-<kebab-case-title>/` with `description.md`, `setup.md`, `solutions.md` following the structure above.
 2. `setup.md`'s `## Setup` block must be self-contained, same rule as above; add `## Setup2`, … there for alternative datasets.
 3. `make setup <num>-<kebab-case-title>` must run cleanly before committing.
-4. Add a row for it to the **LeetCode problems** table in the [SQLs section of README.md](README.md#sqls), keeping the table sorted by problem number — see [Updating README.md](#updating-readmemd) below.
+4. Add a row for it to the **LeetCode problems** table in [PROBLEMS.md](PROBLEMS.md), keeping the table sorted by problem number — see [Updating PROBLEMS.md](#updating-problemsmd) below.
 
 **Other (non-LeetCode or modified) problem:**
 
 1. Create `SQLs/other_problems/<kebab-case-title>/` with `description.md`, `setup.md`, `solutions.md`, same structure and rules as the LeetCode case (no number prefix).
 2. `make setup <kebab-case-title>` must run cleanly before committing.
-3. Add a row for it to the **Other problems** table in the [SQLs section of README.md](README.md#sqls) — see [Updating README.md](#updating-readmemd) below.
+3. Add a row for it to the **Other problems** table in [PROBLEMS.md](PROBLEMS.md) — see [Updating PROBLEMS.md](#updating-problemsmd) below.
 
-## Updating README.md
+## Updating PROBLEMS.md
 
-Every folder added under `SQLs/` must get a row in the matching table (LeetCode / Other problems) in README.md's `## SQLs` section, with three columns:
+Every folder added under `SQLs/` must get a row in the matching table (LeetCode / Other problems) in `PROBLEMS.md`, with three columns:
 
 - **SQL Link** — link to `description.md` inside the `leetcode`/`other_problems` folder.
 - **Level** — Easy/Medium/Hard. For LeetCode problems, use the problem's actual LeetCode difficulty (don't guess — many locked/older problems are rated differently than intuition suggests; verify via web search if unsure). For non-LeetCode problems, use your own judgment of query complexity.
 - **Tags** — one or more short tags describing the SQL techniques used (e.g. `Recursive CTE`, `Window Functions`, `Pivot Table`, `Date Manipulation`, `Gaps & Islands`, `Self Join`), derived from what the solution(s) actually do.
 
-A git pre-commit hook (`scripts/check_readme_links.py`, installed via `make install-hooks`) blocks commits that add a `SQLs/` problem without a corresponding link in README.md — but it only checks that a link exists, not that Level/Tags are filled in correctly, so still add the full row rather than relying on the hook to catch a missing link after the fact.
+A git pre-commit hook (`scripts/check_readme_links.py`, installed via `make install-hooks`) blocks commits that add a `SQLs/` problem without a corresponding link in `PROBLEMS.md` — but it only checks that a link exists, not that Level/Tags are filled in correctly, so still add the full row rather than relying on the hook to catch a missing link after the fact.

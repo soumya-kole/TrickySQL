@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Fail if any SQLs/ problem file or folder isn't linked from README.md.
+"""Fail if any SQLs/ problem file or folder isn't linked from PROBLEMS.md.
 
 Run standalone, or wired up as the pre-commit hook installed by `make install-hooks`.
 """
@@ -9,7 +9,7 @@ from pathlib import Path
 
 PROJECT_ROOT = Path(__file__).parent.parent
 SQLS_DIR = PROJECT_ROOT / "SQLs"
-README = PROJECT_ROOT / "README.md"
+PROBLEMS = PROJECT_ROOT / "PROBLEMS.md"
 
 
 def expected_paths() -> list[str]:
@@ -33,14 +33,14 @@ def expected_paths() -> list[str]:
 
 
 def main() -> int:
-    readme_text = README.read_text()
-    missing = [p for p in expected_paths() if p not in readme_text]
+    problems_text = PROBLEMS.read_text()
+    missing = [p for p in expected_paths() if p not in problems_text]
 
     if missing:
-        print("README.md is missing a link for the following problem(s):")
+        print("PROBLEMS.md is missing a link for the following problem(s):")
         for path in missing:
             print(f"  - {path}")
-        print("\nAdd a row for each to the appropriate table in the SQLs section of README.md.")
+        print("\nAdd a row for each to the appropriate table in PROBLEMS.md.")
         return 1
 
     return 0

@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Blocks commits that add a SQLs/ problem without a corresponding README.md link.
+# Blocks commits that add a SQLs/ problem without a corresponding PROBLEMS.md link.
 # Installed via `make install-hooks` (sets git's core.hooksPath to this directory).
 set -e
 

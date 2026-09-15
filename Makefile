@@ -10,7 +10,7 @@ setup:
 	uv run python scripts/setup_sql.py $(filter-out $@,$(MAKECMDGOALS))
 
 # Run once after cloning: enables the pre-commit hook that blocks commits
-# adding a SQLs/ problem without a corresponding README.md link.
+# adding a SQLs/ problem without a corresponding PROBLEMS.md link.
 install-hooks:
 	git config core.hooksPath githooks
 
