@@ -103,6 +103,7 @@ A pre-commit hook (enabled via `make install-hooks`, see [Prerequisite](#prerequ
 | [569. Median Employee Salary](SQLs/leetcode/0569-median-employee-salary/description.md) | Hard | Window Functions, Median |
 | [571. Find Median Given Frequency of Numbers](SQLs/leetcode/0571-find-median-given-frequency-of-numbers/description.md) | Hard | Recursive CTE, Window Functions, Median |
 | [579. Find Cumulative Salary of an Employee](SQLs/leetcode/0579-find-cumulative-salary-of-an-employee/description.md) | Hard | Window Functions, Ranking, Running Total |
+| [585. Investments in 2016](SQLs/leetcode/0585-investments-in-2016/description.md) | Medium | Window Functions, Subqueries, Aggregation |
 | [603. Consecutive Available Seats](SQLs/leetcode/0603-consecutive-available-seats/description.md) | Easy | Self Join, Window Functions, Gaps & Islands |
 | [612. Shortest Distance in a Plane](SQLs/leetcode/0612-shortest-distance-in-a-plane/description.md) | Medium | Self Join, Geometry |
 | [618. Students Report By Geography](SQLs/leetcode/0618-students-report-by-geography/description.md) | Hard | Window Functions, Pivot Table |
@@ -111,6 +112,7 @@ A pre-commit hook (enabled via `make install-hooks`, see [Prerequisite](#prerequ
 | [1264. Page Recommendations](SQLs/leetcode/1264-page-recommendations/description.md) | Medium | Self Join, Union, Subquery |
 | [1270. All People Report to the Given Manager](SQLs/leetcode/1270-all-people-report-to-the-given-manager/description.md) | Medium | Self Join, Hierarchical Query |
 | [1280. Students and Examinations](SQLs/leetcode/1280-students-and-examinations/description.md) | Easy | Cross Join, Aggregation |
+| [1321. Restaurant Growth](SQLs/leetcode/1321-restaurant-growth/description.md) | Medium | Window Functions, Self Join, Date Manipulation, Moving Average |
 | [1336. Number of Transactions per Visit](SQLs/leetcode/1336-number-of-transactions-per-visit/description.md) | Hard | Recursive CTE, Aggregation |
 | [1369. Get the Second Most Recent Activity](SQLs/leetcode/1369-get-the-second-most-recent-activity/description.md) | Hard | Window Functions, Ranking |
 | [1384. Total Sales Amount by Year](SQLs/leetcode/1384-total-sales-amount-by-year/description.md) | Hard | Recursive CTE, Date Manipulation |
