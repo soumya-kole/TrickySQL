@@ -1,7 +1,7 @@
 # Date & Time Functions in MySQL
 
 MySQL's date functions fall into four jobs: **pulling a part out of a date**
-(`DAYOFWEEK`, `DAYNAME`, ...), **shifting a date** (`DATE_ADD`, `DATEDIFF`, ...),
+(`DAYOFWEEK`, `DAYNAME`, ...), **shifting a date** (`ADDDATE`, `DATEDIFF`, ...),
 **finding a boundary** (`LAST_DAY`, ...), and **formatting** (`DATE_FORMAT`).
 This tutorial walks through each job against a small `orders` table, then closes
 with two recursive-CTE tricks — generating a calendar row-by-row is one of the
@@ -121,17 +121,18 @@ ORDER BY order_date;
 +------------+----------+
 ```
 
-## Step 2: Shifting a date — `DATE_ADD`, `DATE_SUB`, `INTERVAL`
+## Step 2: Shifting a date — `SUBDATE`, `ADDDATE`, `INTERVAL`
 
-`DATE_ADD`/`DATE_SUB` move a date by an `INTERVAL`. The interval unit
-(`DAY`, `WEEK`, `MONTH`, `YEAR`, ...) tells MySQL how to count.
+`ADDDATE`/`SUBDATE` move a date by an `INTERVAL`, same as `DATE_ADD`/
+`DATE_SUB` — they're synonyms in that form. The interval unit (`DAY`, `WEEK`,
+`MONTH`, `YEAR`, ...) tells MySQL how to count.
 
 ```sql
 SELECT
     order_date,
-    DATE_ADD(order_date, INTERVAL 7 DAY)   AS plus_1_week,
-    DATE_SUB(order_date, INTERVAL 1 MONTH) AS minus_1_month,
-    order_date + INTERVAL 1 YEAR           AS plus_1_year   -- same as DATE_ADD
+    ADDDATE(order_date, INTERVAL 7 DAY)   AS plus_1_week,
+    SUBDATE(order_date, INTERVAL 1 MONTH) AS minus_1_month,
+    order_date + INTERVAL 1 YEAR          AS plus_1_year   -- same as ADDDATE
 FROM orders
 WHERE customer = 'Ann'
 ORDER BY order_date;
@@ -197,9 +198,28 @@ WHERE customer = 'Cara';
 +------------+----------------+---------------+
 ```
 
-The same "first of month" can also be written `DATE_SUB(order_date, INTERVAL
+The same "first of month" can also be written `SUBDATE(order_date, INTERVAL
 DAYOFMONTH(order_date) - 1 DAY)` — both are common in solutions, `DATE_FORMAT`
 is usually the more readable one.
+
+### `SUBDATE`/`ADDDATE` vs `DATE_SUB`/`DATE_ADD`
+
+`SUBDATE`/`ADDDATE` are synonyms for `DATE_SUB`/`DATE_ADD` — but only when
+called with an `INTERVAL` expression. They also accept a second form,
+`SUBDATE(date, days)`/`ADDDATE(date, days)`, where `days` is a plain integer
+(implicitly `DAY`s). `DATE_SUB`/`DATE_ADD` have no such shorthand — passing a
+bare integer instead of `INTERVAL n DAY` is a syntax error:
+
+```sql
+SELECT SUBDATE('2026-09-15', 7);   -- 2026-09-08, OK
+SELECT DATE_SUB('2026-09-15', 7);  -- ERROR 1064: syntax error
+```
+
+Prefer `SUBDATE`/`ADDDATE` over `DATE_SUB`/`DATE_ADD` in this repo's
+solutions — the plain-integer form reads more compactly for the common "shift
+by N days" case, and `SUBDATE`/`ADDDATE` still accept `INTERVAL` when a
+different unit (`MONTH`, `YEAR`, ...) is needed, so there's no case where
+`DATE_SUB`/`DATE_ADD` can do something they can't.
 
 ## Step 4: Formatting — `DATE_FORMAT` and `STR_TO_DATE`
 
@@ -267,7 +287,7 @@ WITH RECURSIVE days AS (
 
     UNION ALL
 
-    SELECT DATE_ADD(dt, INTERVAL 1 DAY), n + 1
+    SELECT ADDDATE(dt, INTERVAL 1 DAY), n + 1
     FROM days
     WHERE n < 7
 )
@@ -308,7 +328,7 @@ WITH RECURSIVE calendar AS (
 
     UNION ALL
 
-    SELECT DATE_ADD(dt, INTERVAL 1 DAY)
+    SELECT ADDDATE(dt, INTERVAL 1 DAY)
     FROM calendar
     WHERE dt < '2026-09-30'
 )

@@ -107,6 +107,7 @@ A pre-commit hook (enabled via `make install-hooks`, see [Prerequisite](#prerequ
 | [612. Shortest Distance in a Plane](SQLs/leetcode/0612-shortest-distance-in-a-plane/description.md) | Medium | Self Join, Geometry |
 | [618. Students Report By Geography](SQLs/leetcode/0618-students-report-by-geography/description.md) | Hard | Window Functions, Pivot Table |
 | [1097. Game Play Analysis V](SQLs/leetcode/1097-game-play-analysis-v/description.md) | Hard | Window Functions, Date Manipulation, Aggregation |
+| [1225. Report Contiguous Dates](SQLs/leetcode/1225-report-contiguous-dates/description.md) | Hard | Union, Window Functions, Gaps & Islands |
 | [1264. Page Recommendations](SQLs/leetcode/1264-page-recommendations/description.md) | Medium | Self Join, Union, Subquery |
 | [1270. All People Report to the Given Manager](SQLs/leetcode/1270-all-people-report-to-the-given-manager/description.md) | Medium | Self Join, Hierarchical Query |
 | [1280. Students and Examinations](SQLs/leetcode/1280-students-and-examinations/description.md) | Easy | Cross Join, Aggregation |
