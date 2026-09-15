@@ -98,6 +98,8 @@ A pre-commit hook (enabled via `make install-hooks`, see [Prerequisite](#prerequ
 |---|---|---|
 | [180. Consecutive Numbers](SQLs/leetcode/0180-consecutive-numbers/description.md) | Medium | Window Functions, Gaps & Islands |
 | [197. Rising Temperature](SQLs/leetcode/0197-rising-temperature/description.md) | Easy | Self Join, Window Functions, Date Manipulation |
+| [534. Game Play Analysis III](SQLs/leetcode/0534-game-play-analysis-iii/description.md) | Medium | Window Functions, Self Join, Running Total |
+| [550. Game Play Analysis IV](SQLs/leetcode/0550-game-play-analysis-iv/description.md) | Medium | Self Join, Date Manipulation, Aggregation |
 | [571. Find Median Given Frequency of Numbers](SQLs/leetcode/0571-find-median-given-frequency-of-numbers/description.md) | Hard | Recursive CTE, Window Functions, Median |
 | [579. Find Cumulative Salary of an Employee](SQLs/leetcode/0579-find-cumulative-salary-of-an-employee/description.md) | Hard | Window Functions, Ranking, Running Total |
 | [603. Consecutive Available Seats](SQLs/leetcode/0603-consecutive-available-seats/description.md) | Easy | Self Join, Window Functions, Gaps & Islands |
