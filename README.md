@@ -100,11 +100,13 @@ A pre-commit hook (enabled via `make install-hooks`, see [Prerequisite](#prerequ
 | [197. Rising Temperature](SQLs/leetcode/0197-rising-temperature/description.md) | Easy | Self Join, Window Functions, Date Manipulation |
 | [534. Game Play Analysis III](SQLs/leetcode/0534-game-play-analysis-iii/description.md) | Medium | Window Functions, Self Join, Running Total |
 | [550. Game Play Analysis IV](SQLs/leetcode/0550-game-play-analysis-iv/description.md) | Medium | Self Join, Date Manipulation, Aggregation |
+| [569. Median Employee Salary](SQLs/leetcode/0569-median-employee-salary/description.md) | Hard | Window Functions, Median |
 | [571. Find Median Given Frequency of Numbers](SQLs/leetcode/0571-find-median-given-frequency-of-numbers/description.md) | Hard | Recursive CTE, Window Functions, Median |
 | [579. Find Cumulative Salary of an Employee](SQLs/leetcode/0579-find-cumulative-salary-of-an-employee/description.md) | Hard | Window Functions, Ranking, Running Total |
 | [603. Consecutive Available Seats](SQLs/leetcode/0603-consecutive-available-seats/description.md) | Easy | Self Join, Window Functions, Gaps & Islands |
 | [612. Shortest Distance in a Plane](SQLs/leetcode/0612-shortest-distance-in-a-plane/description.md) | Medium | Self Join, Geometry |
 | [618. Students Report By Geography](SQLs/leetcode/0618-students-report-by-geography/description.md) | Hard | Window Functions, Pivot Table |
+| [1097. Game Play Analysis V](SQLs/leetcode/1097-game-play-analysis-v/description.md) | Hard | Window Functions, Date Manipulation, Aggregation |
 | [1264. Page Recommendations](SQLs/leetcode/1264-page-recommendations/description.md) | Medium | Self Join, Union, Subquery |
 | [1270. All People Report to the Given Manager](SQLs/leetcode/1270-all-people-report-to-the-given-manager/description.md) | Medium | Self Join, Hierarchical Query |
 | [1280. Students and Examinations](SQLs/leetcode/1280-students-and-examinations/description.md) | Easy | Cross Join, Aggregation |

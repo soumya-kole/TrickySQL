@@ -4,7 +4,7 @@
 
 Rebuild the actual array and read off its middle, just like you would by hand.
 
-1. A recursive CTE generates the integers `1 … MAX(frequency)`. Joining `Numbers` to it on `frequency >= rn` emits each `num` exactly `frequency` times — the decompressed array.
+1. A recursive CTE decompresses directly, one `num` at a time: the anchor emits `(num, 1)` for every row of `Numbers`, and the recursive step increments `frequency` for a given `num` as long as it's still below that `num`'s target frequency (a correlated subquery back into `Numbers`). This emits each `num` exactly `frequency` times — the decompressed array — without joining back to `Numbers`.
 2. `ROW_NUMBER() OVER (ORDER BY num)` numbers those copies in **sorted** order (the explicit `ORDER BY` is essential — a table has no inherent order to rely on), and `COUNT(*) OVER ()` gives the total length `total_num`.
 3. The middle position(s) are exactly the rows with `total_num/2 <= rnk <= total_num/2 + 1`. Because MySQL's `/` is decimal division, this single predicate handles both parities: for an **even** length the endpoints land on whole numbers (`.0`), selecting the two middle rows; for an **odd** length they land on `.5`, selecting the one middle row. Averaging the selected `num`s and rounding gives the median.
 
@@ -12,17 +12,18 @@ Rebuild the actual array and read off its middle, just like you would by hand.
 
 ```sql
 WITH RECURSIVE cte AS (
-    SELECT 1 AS rn
+    SELECT num, 1 AS frequency FROM Numbers
     UNION ALL
-    SELECT rn + 1 FROM cte WHERE rn < (SELECT MAX(frequency) FROM Numbers)
+    SELECT num, frequency + 1
+    FROM cte
+    WHERE frequency < (SELECT frequency FROM Numbers AS n WHERE n.num = cte.num)
 ),
 cte2 AS (
     SELECT
-        n.num,
-        ROW_NUMBER() OVER (ORDER BY n.num) AS rnk,
-        COUNT(*)     OVER ()               AS total_num
-    FROM Numbers AS n
-    JOIN cte AS c ON n.frequency >= c.rn
+        num,
+        ROW_NUMBER() OVER (ORDER BY num) AS rnk,
+        COUNT(*)     OVER ()             AS total_num
+    FROM cte
 )
 SELECT ROUND(AVG(num), 1) AS median
 FROM cte2
