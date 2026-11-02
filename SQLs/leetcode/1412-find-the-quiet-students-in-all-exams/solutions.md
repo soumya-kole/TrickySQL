@@ -10,16 +10,15 @@ A "quiet" student is one who, across every exam they sat, was never the (possibl
 
 ```sql
 WITH ranked AS (
-    SELECT
-        student_id,
-        RANK() OVER (PARTITION BY exam_id ORDER BY score)      AS rk_low,
-        RANK() OVER (PARTITION BY exam_id ORDER BY score DESC) AS rk_high
+    SELECT student_id,
+           RANK() OVER (PARTITION BY exam_id ORDER BY score)      AS rk_low,
+           RANK() OVER (PARTITION BY exam_id ORDER BY score DESC) AS rk_high
     FROM Exam
 )
 SELECT s.student_id, s.student_name
 FROM ranked r
 JOIN Student s ON s.student_id = r.student_id
 GROUP BY s.student_id, s.student_name
-HAVING SUM(r.rk_low = 1) = 0 AND SUM(r.rk_high = 1) = 0
+HAVING SUM(CASE WHEN r.rk_low = 1 OR r.rk_high = 1 THEN 1 ELSE 0 END) = 0
 ORDER BY s.student_id;
 ```
