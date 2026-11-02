@@ -10,6 +10,31 @@ Separately, `per_visit` counts transactions per `(user_id, transaction_date)` an
 
 ```sql
 WITH RECURSIVE per_visit AS (
+    SELECT v.user_id, v.visit_date, COUNT(t.amount) AS txn_count
+    FROM Visits v
+    LEFT JOIN Transactions t
+           ON v.user_id = t.user_id
+          AND v.visit_date = t.transaction_date
+    GROUP BY v.user_id, v.visit_date
+),
+all_counts AS (
+    SELECT 0 AS txn_count
+    UNION ALL
+    SELECT txn_count + 1
+    FROM all_counts
+    WHERE txn_count < (SELECT MAX(txn_count) FROM per_visit)
+)
+SELECT a.txn_count AS transactions_count,
+       COUNT(c.user_id) AS visits_count
+FROM all_counts a
+LEFT JOIN per_visit c ON a.txn_count = c.txn_count
+GROUP BY a.txn_count
+ORDER BY a.txn_count;
+``
+Slight variation :
+
+```sql
+WITH RECURSIVE per_visit AS (
     SELECT
         v.user_id,
         v.visit_date,
