@@ -21,3 +21,33 @@ FROM Employees e
 LEFT JOIN worked w ON w.employee_id = e.employee_id
 WHERE COALESCE(w.hours_worked, 0) < e.needed_hours;
 ```
+If Logs has multiple months data and if employee should be included if during any month there was a shortfall, then we need following query:
+``` sql
+WITH worked AS (
+    SELECT
+        employee_id,
+        DATE_FORMAT(in_time, '%Y-%m') AS work_month,
+       sum(CEILING(TIMESTAMPDIFF(SECOND, in_time, out_time)/60)/60)  AS hours_worked
+    FROM Logs
+    GROUP BY employee_id, work_month
+),
+months AS (
+    SELECT DISTINCT
+        DATE_FORMAT(in_time, '%Y-%m') AS work_month
+    FROM Logs
+),
+monthwise AS (
+    SELECT
+        m.work_month,
+        e.employee_id,
+        e.needed_hours
+    FROM months m
+    CROSS JOIN Employees e
+)
+SELECT DISTINCT mw.employee_id
+FROM monthwise mw
+LEFT JOIN worked w
+    ON w.employee_id = mw.employee_id
+    AND w.work_month = mw.work_month
+WHERE COALESCE(w.hours_worked, 0) < mw.needed_hours;
+```
