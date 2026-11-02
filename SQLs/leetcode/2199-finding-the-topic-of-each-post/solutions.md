@@ -17,3 +17,17 @@ LEFT JOIN Keywords k
     ON INSTR(CONCAT(' ', p.content, ' '), CONCAT(' ', k.word, ' ')) > 0
 GROUP BY p.post_id;
 ```
+With Regexp
+``` sql
+select 
+	p.post_id, 
+	GROUP_CONCAT( 
+	distinct coalesce(k.topic_id, 'Ambiguous!') 
+	order by k.topic_id 
+	separator ',') AS topic -- separator ',' is optioanl as , is default
+from 
+	Posts p
+	left join Keywords k
+on content regexp concat('\\b', k.word, '\\b')
+group by 1 order by 1;
+```
