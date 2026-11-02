@@ -30,5 +30,33 @@ FROM all_counts a
 LEFT JOIN per_visit c ON a.txn_count = c.txn_count
 GROUP BY a.txn_count
 ORDER BY a.txn_count;
-``
+```
+Slight variation :
+
+```sql
+WITH RECURSIVE per_visit AS (
+    SELECT
+        v.user_id,
+        v.visit_date,
+        COALESCE(t.cnt, 0) AS txn_count
+    FROM Visits v
+    LEFT JOIN (
+        SELECT user_id, transaction_date, COUNT(*) AS cnt
+        FROM Transactions
+        GROUP BY user_id, transaction_date
+    ) t ON t.user_id = v.user_id AND t.transaction_date = v.visit_date
+),
+axis AS (
+    SELECT 0 AS n
+    UNION ALL
+    SELECT n + 1 FROM axis WHERE n < (SELECT MAX(txn_count) FROM per_visit)
+)
+SELECT
+    axis.n AS transactions_count,
+    COUNT(pv.user_id) AS visits_count
+FROM axis
+LEFT JOIN per_visit pv ON pv.txn_count = axis.n
+GROUP BY axis.n
+ORDER BY axis.n;
+```
 
