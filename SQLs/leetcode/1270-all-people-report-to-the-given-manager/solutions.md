@@ -2,19 +2,11 @@
 
 ## Solution 1: Two self-joins walk the chain up to the head
 
-The reporting chain is bounded at three hops, so there's no need for a recursive CTE — two self-joins on `Employees` walk from an employee to their manager, then to that manager's manager, which is enough to cover every case in the constraint.
+The reporting chain is bounded at three hops, so there's no need for a recursive CTE — two self-joins on `Employees` walk from boos to first level and from first level to second level employees.
 
-The head of the company (`employee_id = 1`) is its own manager, so a short chain like `2 -> 1` still resolves correctly: joining past the head just lands back on the head each time (`e2` and `e3` both become the Boss row), and `e3.manager_id = 1` still holds. Excluding `e1.employee_id = 1` keeps the head itself out of its own result.
+
 
 #### MySQL
-
-```sql
-SELECT e1.employee_id
-FROM Employees e1
-JOIN Employees e2 ON e1.manager_id = e2.employee_id
-JOIN Employees e3 ON e2.manager_id = e3.employee_id
-WHERE e1.employee_id != 1 AND e3.manager_id = 1;
-```
 ```sql
 SELECT e3.employee_id
 FROM Employees e1 -- Boss
@@ -23,4 +15,26 @@ JOIN Employees e3 ON e2.employee_id = e3.manager_id -- Second Level
 WHERE 
 e3.employee_id != 1 AND -- Exclude Boss
 e1.manager_id = 1; -- Identify boss
+```
+In case of unknown hops, a recursive CTE would be required:
+
+``` sql
+WITH RECURSIVE report AS (
+    SELECT
+        employee_id
+    FROM Employees
+    WHERE manager_id = 1
+      AND employee_id != 1
+
+    UNION ALL
+
+    SELECT
+        e.employee_id
+    FROM Employees e
+    JOIN report r
+        ON e.manager_id = r.employee_id
+)
+
+SELECT *
+FROM report;
 ```
