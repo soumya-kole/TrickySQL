@@ -25,16 +25,13 @@ WITH RECURSIVE report AS (
     FROM Employees
     WHERE manager_id = 1
       AND employee_id != 1
-
     UNION ALL
-
     SELECT
         e.employee_id
     FROM Employees e
     JOIN report r
         ON e.manager_id = r.employee_id
 )
-
 SELECT *
 FROM report;
 ```
