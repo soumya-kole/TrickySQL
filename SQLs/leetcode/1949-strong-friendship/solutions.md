@@ -9,7 +9,7 @@ A common friend of `u` and `v` is a third user `w` reachable as an edge from bot
 #### MySQL
 
 This is more readable solution :
-```
+```sql
 WITH bidirectional_friendship AS (
     SELECT user1_id, user2_id
     FROM Friendship
