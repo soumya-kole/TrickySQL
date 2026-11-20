@@ -59,5 +59,6 @@ See [README.md](README.md) for how the problems are structured, how to load thei
 | [Paired Products (Frequently Bought Together)](SQLs/other_problems/paired-products-frequently-bought-together/description.md) | Medium | Self Join, Aggregation, Top-N |
 | [Exchange Seats (within Department)](SQLs/other_problems/exchange-seats-within-department/description.md) | Medium | Window Functions, CASE Expressions |
 | [Match Win/Loss Summary](SQLs/other_problems/match-win-summary/description.md) | Easy | Union, Aggregation, CASE Expressions |
+| [Circular Money Flow](SQLs/other_problems/circular-money-flow/description.md) | Hard | Recursive CTE, Cycle Detection |
 | [Split Full Name into First/Middle/Last](SQLs/other_problems/first-middle-last-name/description.md) | Easy | String Manipulation, CASE Expressions |
 | [Start and End Location of a Trip](SQLs/other_problems/start-end-location-of-a-trip/description.md) | Medium | Anti Join, Aggregation, CASE Expressions |
